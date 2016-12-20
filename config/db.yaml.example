@@ -1,0 +1,12 @@
+app:
+    server: localhost
+    username: dbproject
+    password: dbproject
+    db: dbproject_app
+
+test:
+    server: localhost
+    username: dbproject
+    password: dbproject
+    db: dbproject_test
+

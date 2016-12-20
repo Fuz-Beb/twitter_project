@@ -1,0 +1,22 @@
+<?php
+require '../lib/main.php';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if(isset($_GET['id'])) {
+        Controller\Post\response($_GET['id'], $_POST);
+    }
+    else {
+        Controller\Post\post($_POST);
+    }
+}
+elseif(isset($_GET['id'])) {
+    if(isset($_GET['like'])) {
+        Controller\Post\like($_GET['id']);
+    }
+    else {
+        Controller\Post\post_page($_GET['id']);
+    }
+}
+else {
+    header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
+}
+require '../lib/closure.php';
