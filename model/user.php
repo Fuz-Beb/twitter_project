@@ -159,7 +159,7 @@ function destroy($id) {
 
         $sql = "DELETE FROM `UTILISATEUR` WHERE `id` = :id";
         $sth = $db->prepare($sql);
-        $sth->execute(array(':uid' => $uid));
+        $sth->execute(array(':id' => $id));
 
     } catch (\PDOException $e) {
         print $e->getMessage();
@@ -269,6 +269,7 @@ function get_followers($uid) {
     $sth->execute(array(':uid' => $uid));
 
     $oneObject[] = (object) array();
+    $oneObject = [];
 
     while($result = $sth->fetch(PDO::FETCH_NUM)) {
         $oneObject[$i] = get($result[0]);
@@ -279,7 +280,6 @@ function get_followers($uid) {
 
   } catch (\PDOException $e) {
     print $e->getMessage();
-    return NULL;
     }
 }
 
@@ -299,6 +299,7 @@ function get_followings($uid) {
     $sth->execute(array(':uid' => $uid));
 
     $oneObject[] = (object) array();
+    $oneObject = [];
 
     while($result = $sth->fetch(PDO::FETCH_NUM)) {
         $oneObject[$i] = get($result[0]);
@@ -309,7 +310,6 @@ function get_followings($uid) {
 
   } catch (\PDOException $e) {
     print $e->getMessage();
-    return NULL;
     }
 }
 
@@ -320,16 +320,19 @@ function get_followings($uid) {
  */
 function get_stats($uid) {
 
-    /*try {
+    try {
     $db = \Db::dbc();
 
-    $sql = "SELECT `IDUSER` COUNT(`IDTWEET`) FROM `TWEET` WHERE `IDUSER` = :uid";
+    $sql = "SELECT COUNT(`IDTWEET`) FROM `TWEET` WHERE `IDUSER` = :uid";
     $sth = $db->prepare($sql);
     $sth->execute(array(':uid' => $uid));
     
     $nb_posts = $sth->fetch(PDO::FETCH_NUM);
+
+    $obj = (object) array();
+    $obj->nb_posts = $nb_posts[0];
     
-    /* IL FAUT COMPTER LE NOMBRE D'ENREGISTREMENT 
+    
     $nb_followers = get_followers($uid);
     $nb_following = get_followings($uid);
 
@@ -344,7 +347,7 @@ function get_stats($uid) {
         "nb_posts" => 10,
         "nb_followers" => 50,
         "nb_following" => 66
-    );*/
+    );
 }
 
 /**
