@@ -18,17 +18,18 @@ function get($id) {
     try {
         $db = \Db::dbc();
 
-        $sth = $db->prepare("SELECT `id`, `username`, `name`, `password`, `email`, `avatar` FROM `UTILISATEUR` WHERE `id` = :id");
+        $sth = $db->prepare("SELECT `id`, `username`, `name`, `password`, `email`, `avatar`, `inscri` FROM `UTILISATEUR` WHERE `id` = :id");
         $sth->execute(array(':id' => $id));
-        $array = $sth->fetchAll(PDO::FETCH_NUM);
+        $array = $sth->fetch(PDO::FETCH_NUM);
         
         $obj = (object) array();
-        $obj->id = $array[0][0];
-        $obj->username = $array[0][1];
-        $obj->name = $array[0][2];
-        $obj->password = $array[0][3];
-        $obj->email = $array[0][4];
-        $obj->avatar = $array[0][5];
+        $obj->id = $array[0];
+        $obj->username = $array[1];
+        $obj->name = $array[2];
+        $obj->password = $array[3];
+        $obj->email = $array[4];
+        $obj->avatar = $array[5];
+        $obj->inscri = $array[6];
 
         return $obj;
 
@@ -57,17 +58,18 @@ function create($username, $name, $password, $email, $avatar_path) {
         /* Hashage du mot de passe */
         $hash_pass = hash_password($password);
       
-        $sql = "INSERT INTO `UTILISATEUR` (`id`, `username`, `name`, `password`, `email`, `avatar`) VALUES (NULL, '$username', '$name', '$hash_pass', '$email', '$avatar_path')";
+        $sql = "INSERT INTO `UTILISATEUR` (`id`, `username`, `name`, `password`, `email`, `avatar`, `inscri`) VALUES (NULL, '$username', '$name', '$hash_pass', '$email', '$avatar_path', NOW())";
         $db->query($sql);
 
 
         $sql = "SELECT `id` FROM `UTILISATEUR` WHERE `username` = :username";
         $sth = $db->prepare($sql);
         $sth->execute(array(':username' => $username));
-        $result = $sth->fetch(PDO::FETCH_BOTH);
+        $result = $sth->fetch(PDO::FETCH_NUM);
 
     } catch (\PDOException $e) {
       print $e->getMessage();
+      return NULL;
     }
     return $result[0];
 }
@@ -221,6 +223,7 @@ function list_all() {
 
     } catch (\PDOException $e) {
         print $e->getMessage();
+        return NULL;
     }
 }
 
