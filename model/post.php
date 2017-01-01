@@ -2,6 +2,7 @@
 namespace Model\Post;
 use \Db;
 use \PDOException;
+use \DateTime;
 /**
  * Post
  *
@@ -16,12 +17,26 @@ use \PDOException;
  * @warning the date attribute is a DateTime object
  */
 function get($id) {
-    return (object) array(
-        "id" => 1337,
-        "text" => "Text",
-        "date" => new \DateTime('2011-01-01T15:03:01'),
-        "author" => \Model\User\get(2)
-    );
+
+    try {
+        $db = \Db::dbc();
+
+        $sth = $db->prepare("SELECT `CONTENU`, `DATEPUBLI` FROM `TWEET` WHERE `id` = :id");
+        $sth->execute(array(':id' => $id));
+        $array = $sth->fetch(PDO::FETCH_NUM);
+        
+        $obj = (object) array();
+        $obj->id = $id;
+        $obj->text = $array[0];
+        $obj->text = new \DateTime($array[1]);
+        $obj->author = \Model\User\get($id);
+
+        return $obj;
+
+    } catch (\PDOException $e) {
+        print $e->getMessage();
+        return NULL;
+    }
 }
 
 /**
@@ -35,15 +50,42 @@ function get($id) {
  * @warning the responds_to attribute is either null (if the post is not a response) or a post object
  */
 function get_with_joins($id) {
-    return (object) array(
-        "id" => 1337,
-        "text" => "Ima writing a post !",
-        "date" => new \DateTime('2011-01-01T15:03:01'),
-        "author" => \Model\User\get(2),
-        "likes" => [],
-        "hashtags" => [],
-        "responds_to" => null
-    );
+
+    try {
+        $db = \Db::dbc();
+
+        /* Récupération des 4 premiers attribut */
+        $obj = get($id);
+        $sth = $db->prepare("SELECT `IDUSER` FROM `AIMER` WHERE `IDTWEET` = :id");
+        $sth->execute(array(':id' => $id));
+
+        /* Récupération des objects des personnes qui ont like le post */
+        $likes[] = (object) array();
+        while($result = $sth->fetch(PDO::FETCH_NUM)) {
+            $likes[$i] = \Model\User\get($result[0]);
+            $i++;
+        }
+
+        $obj->likes = $likes;
+        $obj->hashtags = extract_hashtags($obj->text);
+
+        /* Récupération de l'object du tweet si c'est une réponse */
+        $sth = $db->prepare("SELECT `IDTWEET_REPONSE` FROM `TWEET` WHERE `IDTWEET` = :id");
+        $sth->execute(array(':id' => $id));
+
+        $respond = $sth->fetch(PDO::FETCH_NUM);
+
+        if ($respond == false)
+            $obj->responds_to = NULL;
+        else
+            $obj->responds_to = get($respond);
+
+        return $obj;
+
+    } catch (\PDOException $e) {
+        print $e->getMessage();
+        return NULL;
+    }
 }
  
 /**
@@ -59,7 +101,22 @@ function get_with_joins($id) {
  * @warning this function takes care to rollback if one of the queries comes to fail.
  */
 function create($author_id, $text, $response_to=null) {
-    return 1337;
+ 
+    try {
+
+        /* Calcul de la date */
+        $date = new DateTime('NOW');
+        $date->format('Y-m-dTH:i:sP');
+        
+        $db = \Db::dbc();
+
+        $sql = "INSERT INTO `TWEET` (`IDTWEET`, `IDUSER`, `IDTWEET_REPONSE`, `CONTENU`, `DATEPUBLI`) VALUES (NULL, '$author_id', '$response_to', '$text', '$date')";
+        $db->query($sql);
+
+    } catch (\PDOException $e) {
+        print $e->getMessage();
+        return NULL;
+    }
 }
 
 /**
@@ -68,12 +125,22 @@ function create($author_id, $text, $response_to=null) {
  * @return an array of hashtags
  */
 function extract_hashtags($text) {
-    return array_filter(
-        explode($text, " "),
-        function($c) {
-            return $c !== "" || $c[0] == "#";
-        }
-    );
+
+    function filter($c) {
+        return $c !== "" || $c[0] == "#";
+    }
+
+    $i = 0;
+    $newArray = array_filter($text, "filter" );
+    $hashtags[] = (object) array();
+
+    while($array = $newArray->fetch(PDO::FETCH_NUM)) {
+        $hashtags[$i]->id = $array[0];
+        $hashtags[$i]->name = $array[1];
+        $i++;
+    }
+
+    return $hashtags;
 }
 
 /**
@@ -82,12 +149,22 @@ function extract_hashtags($text) {
  * @return an array of usernames
  */
 function extract_mentions($text) {
-    return array_filter(
-        explode($text, " "),
-        function($c) {
-            return $c !== "" || $c[0] == "@";
-        }
-    );
+
+    function filter($c) {
+        return $c !== "" || $c[0] == "@";
+    }
+
+    $i = 0;
+    $newArray = array_filter($text, "filter" );
+    $mentioned[] = (object) array();
+
+    while($array = $newArray->fetch(PDO::FETCH_NUM)) {
+        $mentioned[$i]->id = $array[0];
+        $mentioned[$i]->name = $array[1];
+        $i++;
+    }
+
+    return $mentioned;
 }
 
 /**
@@ -97,7 +174,19 @@ function extract_mentions($text) {
  * @return true if everything went ok, false else
  */
 function mention_user($pid, $uid) {
-    return false;
+
+    try {
+        $db = \Db::dbc();
+
+        $sql = "INSERT INTO `MENTIONNER` (`IDTWEET`, `IDUSER`, `NOTIF`) VALUES ('$pid', '$uid', '1')";
+        $db->query($sql);
+
+    } catch (\PDOException $e) {
+        print $e->getMessage();
+        return false;
+    }
+
+    return true;
 }
 
 /**
@@ -106,7 +195,26 @@ function mention_user($pid, $uid) {
  * @return the array of user objects mentioned
  */
 function get_mentioned($pid) {
-    return [];
+
+    try {
+        $i = 0;
+        $db = \Db::dbc();
+        $sth = $db->prepare("SELECT `IDUSER` FROM `MENTIONNER` WHERE `IDTWEET` = :pid");
+        $sth->execute(array(':pid' => $pid));
+
+        $arrayObj[] = (object) array();
+
+        while($result = $sth->fetch(PDO::FETCH_NUM)) {
+            $arrayObj[$i] = get($result[0]);
+            $i++;
+        }
+
+    } catch (\PDOException $e) {
+        print $e->getMessage();
+        return NULL;
+    }
+
+    return $arrayObj;
 }
 
 /**
@@ -115,7 +223,18 @@ function get_mentioned($pid) {
  * @return true if the post has been correctly deleted, false else
  */
 function destroy($id) {
-    return false;
+
+    try {
+        $db = \Db::dbc();
+        $sql = "DELETE FROM `MENTIONNER` WHERE `IDTWEET` = :id";
+        $sth = $db->prepare($sql);
+        $sth->execute(array(':id' => $id));
+
+    } catch (\PDOException $e) {
+        print $e->getMessage();
+        return false;
+    }
+        return true;
 }
 
 /**
