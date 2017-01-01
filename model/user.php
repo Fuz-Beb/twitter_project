@@ -328,14 +328,11 @@ function get_stats($uid) {
     $sth->execute(array(':uid' => $uid));
 
     $nb_posts = $sth->fetch(PDO::FETCH_NUM);
-<<<<<<< HEAD
+
 
     $obj = (object) array();
     $obj->nb_posts = $nb_posts[0];
 
-
-=======
->>>>>>> 5db89cbbd3e891b049fadf6e7bf6230984297181
     $nb_followers = get_followers($uid);
     $nb_following = get_followings($uid);
 
