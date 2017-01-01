@@ -21,7 +21,7 @@ function get($id) {
         $sth = $db->prepare("SELECT `id`, `username`, `name`, `password`, `email`, `avatar`, `inscri` FROM `UTILISATEUR` WHERE `id` = :id");
         $sth->execute(array(':id' => $id));
         $array = $sth->fetch(PDO::FETCH_NUM);
-        
+
         $obj = (object) array();
         $obj->id = $array[0];
         $obj->username = $array[1];
@@ -57,7 +57,7 @@ function create($username, $name, $password, $email, $avatar_path) {
 
         /* Hashage du mot de passe */
         $hash_pass = hash_password($password);
-      
+
         $sql = "INSERT INTO `UTILISATEUR` (`id`, `username`, `name`, `password`, `email`, `avatar`, `inscri`) VALUES (NULL, '$username', '$name', '$hash_pass', '$email', '$avatar_path', NOW())";
         $db->query($sql);
 
@@ -218,7 +218,7 @@ function list_all() {
             $arrayObj[$i] = get($result[0]);
             $i++;
         }
-    
+
         return $arrayObj;
 
     } catch (\PDOException $e) {
@@ -233,19 +233,19 @@ function list_all() {
  * @return the user object or null if the user doesn't exist
  */
 function get_by_username($username) {
-    
+
   try {
     $db = \Db::dbc();
 
     $sql = "SELECT `id`  FROM `UTILISATEUR` WHERE `username` = :username";
     $sth = $db->prepare($sql);
     $sth->execute(array(':username' => $username));
-    $result = $sth->fetchAll(PDO::FETCH_NUM);
+    $result = $sth->fetch(PDO::FETCH_NUM);
 
     if ($result == NULL)
         return NULL;
     else
-        return get($result[0][0]);
+        return get($result[0]);
 
   } catch (\PDOException $e) {
     print $e->getMessage();
@@ -259,7 +259,7 @@ function get_by_username($username) {
  * @return a list of users objects
  */
 function get_followers($uid) {
-    
+
     try {
     $db = \Db::dbc();
 
@@ -275,7 +275,7 @@ function get_followers($uid) {
         $oneObject[$i] = get($result[0]);
         $i++;
     }
-    
+
     return $oneObject;
 
   } catch (\PDOException $e) {
@@ -305,7 +305,7 @@ function get_followings($uid) {
         $oneObject[$i] = get($result[0]);
         $i++;
     }
-    
+
     return $oneObject;
 
   } catch (\PDOException $e) {
@@ -326,8 +326,16 @@ function get_stats($uid) {
     $sql = "SELECT COUNT(`IDTWEET`) FROM `TWEET` WHERE `IDUSER` = :uid";
     $sth = $db->prepare($sql);
     $sth->execute(array(':uid' => $uid));
-    
+
     $nb_posts = $sth->fetch(PDO::FETCH_NUM);
+<<<<<<< HEAD
+
+    $obj = (object) array();
+    $obj->nb_posts = $nb_posts[0];
+
+
+=======
+>>>>>>> 5db89cbbd3e891b049fadf6e7bf6230984297181
     $nb_followers = get_followers($uid);
     $nb_following = get_followings($uid);
 
@@ -357,11 +365,11 @@ function check_auth($username, $password) {
     $sql = "SELECT `id`, `password` FROM `UTILISATEUR` WHERE `username` = :username";
     $sth = $db->prepare($sql);
     $sth->execute(array(':username' => $username));
-    $result = $sth->fetchAll(PDO::FETCH_NUM);
+    $result = $sth->fetch(PDO::FETCH_NUM);
 
     /* Vérification du password */
-    if(password_verify($password, $result[0][1]))
-        return get($result[0][0]);
+    if(password_verify($password, $result[1]))
+        return get($result[0]);
     else
         return NULL;
 
@@ -386,13 +394,13 @@ function check_auth_id($id, $password) {
     $sql = "SELECT `password` FROM `UTILISATEUR` WHERE `id` = :id";
     $sth = $db->prepare($sql);
     $sth->execute(array(':id' => $id));
-    $result = $sth->fetchAll(PDO::FETCH_NUM);
+    $result = $sth->fetch(PDO::FETCH_NUM);
 
     /* Vérification du password */
     /** ATTENTION **/
     /* La différence entre les deux fonctions ne sont pas respecté car dans les units tests, le password fourni n'est pas haché
         donc j'ai repris la même méthode que la fonction d'au dessus avec password_verify */
-    if(password_verify($password, $result[0][0]))
+    if(password_verify($password, $result[0]))
         return get($id);
     else
         return NULL;
