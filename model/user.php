@@ -328,26 +328,18 @@ function get_stats($uid) {
     $sth->execute(array(':uid' => $uid));
     
     $nb_posts = $sth->fetch(PDO::FETCH_NUM);
-
-    $obj = (object) array();
-    $obj->nb_posts = $nb_posts[0];
-    
-    
     $nb_followers = get_followers($uid);
     $nb_following = get_followings($uid);
 
+    $obj = (object) array();
+    $obj->nb_posts = $nb_posts[0];
+    $obj->nb_followers = $nb_followers->count();
+    $obj->nb_following = $nb_following->count();
 
   } catch (\PDOException $e) {
     print $e->getMessage();
     return NULL;
     }
-
-
-    return (object) array(
-        "nb_posts" => 10,
-        "nb_followers" => 50,
-        "nb_following" => 66
-    );
 }
 
 /**
