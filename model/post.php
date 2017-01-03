@@ -340,7 +340,26 @@ function list_user_posts($id, $date_sorted="DESC") {
  * @return the users objects who liked the post
  */
 function get_likes($pid) {
-    return [\Model\User\get(2)];
+
+  try {
+      $i = 0;
+      $db = \Db::dbc();
+      $sth = $db->prepare("SELECT `IDUSER` FROM `AIMER` WHERE `IDTWEET` = :pid");
+      $sth->execute(array(':pid' => $pid));
+
+      $arrayObj[] = (object) array();
+
+      while($result = $sth->fetch(PDO::FETCH_NUM)) {
+          $arrayObj[$i] = get($result[0]);
+          $i++;
+      }
+
+  } catch (\PDOException $e) {
+      print $e->getMessage();
+      return NULL;
+  }
+
+  return $arrayObj;
 }
 
 /**
