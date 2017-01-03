@@ -18,7 +18,7 @@ function get($id) {
     try {
         $db = \Db::dbc();
 
-        $sth = $db->prepare("SELECT `id`, `username`, `name`, `password`, `email`, `avatar`, `inscri` FROM `UTILISATEUR` WHERE `id` = :id");
+        $sth = $db->prepare("SELECT `ID_USER`, `USERNAME`, `NAME`, `PASSWORD`, `EMAIL`, `AVATAR`, `SIGN_UP` FROM `UTILISATEUR` WHERE `ID_USER` = :id");
         $sth->execute(array(':id' => $id));
         $array = $sth->fetch(PDO::FETCH_NUM);
 
@@ -58,11 +58,11 @@ function create($username, $name, $password, $email, $avatar_path) {
         /* Hashage du mot de passe */
         $hash_pass = hash_password($password);
 
-        $sql = "INSERT INTO `UTILISATEUR` (`id`, `username`, `name`, `password`, `email`, `avatar`, `inscri`) VALUES (NULL, '$username', '$name', '$hash_pass', '$email', '$avatar_path', NOW())";
+        $sql = "INSERT INTO `UTILISATEUR` (`ID_USER`, `USERNAME`, `NAME`, `PASSWORD`, `EMAIL`, `AVATAR`, `SIGN_UP`) VALUES (NULL, '$username', '$name', '$hash_pass', '$email', '$avatar_path', NOW())";
         $db->query($sql);
 
 
-        $sql = "SELECT `id` FROM `UTILISATEUR` WHERE `username` = :username";
+        $sql = "SELECT `ID_USER` FROM `UTILISATEUR` WHERE `USERNAME` = :username";
         $sth = $db->prepare($sql);
         $sth->execute(array(':username' => $username));
         $result = $sth->fetch(PDO::FETCH_NUM);
@@ -88,7 +88,7 @@ function modify($uid, $username, $name, $email) {
   try {
     $db = \Db::dbc();
 
-    $sql = "UPDATE `UTILISATEUR` SET `username` = '$username', `name` = '$name', `email` = '$email' WHERE `id` = :uid";
+    $sql = "UPDATE `UTILISATEUR` SET `USERNAME` = '$username', `NAME` = '$name', `EMAIL` = '$email' WHERE `ID_USER` = :uid";
     $sth = $db->prepare($sql);
     $sth->execute(array(':uid' => $uid));
 
@@ -114,7 +114,7 @@ function change_password($uid, $new_password) {
     /* Hashage du mot de passe */
     $hash_pass = hash_password($new_password);
 
-    $sql = "UPDATE `UTILISATEUR` SET `password` = '$hash_pass' WHERE `id` = :uid";
+    $sql = "UPDATE `UTILISATEUR` SET `PASSWORD` = '$hash_pass' WHERE `ID_USER` = :uid";
     $sth = $db->prepare($sql);
     $sth->execute(array(':uid' => $uid));
 
@@ -136,7 +136,7 @@ function change_avatar($uid, $avatar_path) {
   try {
     $db = \Db::dbc();
 
-    $sql = "UPDATE `UTILISATEUR` SET `password` = '$avatar_path' WHERE `id` = :uid";
+    $sql = "UPDATE `UTILISATEUR` SET `PASSWORD` = '$avatar_path' WHERE `ID_USER` = :uid";
     $sth = $db->prepare($sql);
     $sth->execute(array(':uid' => $uid));
 
@@ -157,7 +157,7 @@ function destroy($id) {
     try {
         $db = \Db::dbc();
 
-        $sql = "DELETE FROM `UTILISATEUR` WHERE `id` = :id";
+        $sql = "DELETE FROM `UTILISATEUR` WHERE `ID_USER` = :id";
         $sth = $db->prepare($sql);
         $sth->execute(array(':id' => $id));
 
@@ -187,7 +187,7 @@ function search($string) {
     try {
         $db = \Db::dbc();
 
-        $sql = "SELECT * FROM `UTILISATEUR` WHERE `name` LIKE :string OR `username` LIKE :string";
+        $sql = "SELECT * FROM `UTILISATEUR` WHERE `NAME` LIKE :string OR `USERNAME` LIKE :string";
         $sth = $db->prepare($sql);
         $sth->execute(array(':string' => $string));
 
@@ -237,7 +237,7 @@ function get_by_username($username) {
   try {
     $db = \Db::dbc();
 
-    $sql = "SELECT `id`  FROM `UTILISATEUR` WHERE `username` = :username";
+    $sql = "SELECT `ID_USER`  FROM `UTILISATEUR` WHERE `USERNAME` = :username";
     $sth = $db->prepare($sql);
     $sth->execute(array(':username' => $username));
     $result = $sth->fetch(PDO::FETCH_NUM);
@@ -264,7 +264,7 @@ function get_followers($uid) {
     $db = \Db::dbc();
 
     $i = 0;
-    $sql = "SELECT `IDUSER`  FROM `SUIVRE` WHERE `IDUSER_1` = :uid";
+    $sql = "SELECT `ID_USER`  FROM `SUIVRE` WHERE `ID_USER_1` = :uid";
     $sth = $db->prepare($sql);
     $sth->execute(array(':uid' => $uid));
 
@@ -294,7 +294,7 @@ function get_followings($uid) {
     $db = \Db::dbc();
 
     $i = 0;
-    $sql = "SELECT `IDUSER_1`  FROM `SUIVRE` WHERE `IDUSER` = :uid";
+    $sql = "SELECT `ID_USER_1`  FROM `SUIVRE` WHERE `ID_USER` = :uid";
     $sth = $db->prepare($sql);
     $sth->execute(array(':uid' => $uid));
 
@@ -323,7 +323,7 @@ function get_stats($uid) {
     try {
     $db = \Db::dbc();
 
-    $sql = "SELECT COUNT(`IDTWEET`) FROM `TWEET` WHERE `IDUSER` = :uid";
+    $sql = "SELECT COUNT(`ID_TWEET`) FROM `TWEET` WHERE `ID_USER` = :uid";
     $sth = $db->prepare($sql);
     $sth->execute(array(':uid' => $uid));
 
@@ -359,7 +359,7 @@ function check_auth($username, $password) {
   try {
     $db = \Db::dbc();
 
-    $sql = "SELECT `id`, `password` FROM `UTILISATEUR` WHERE `username` = :username";
+    $sql = "SELECT `ID_USER`, `PASSWORD` FROM `UTILISATEUR` WHERE `USERNAME` = :username";
     $sth = $db->prepare($sql);
     $sth->execute(array(':username' => $username));
     $result = $sth->fetch(PDO::FETCH_NUM);
@@ -388,7 +388,7 @@ function check_auth_id($id, $password) {
   try {
     $db = \Db::dbc();
 
-    $sql = "SELECT `password` FROM `UTILISATEUR` WHERE `id` = :id";
+    $sql = "SELECT `PASSWORD` FROM `UTILISATEUR` WHERE `ID_USER` = :id";
     $sth = $db->prepare($sql);
     $sth->execute(array(':id' => $id));
     $result = $sth->fetch(PDO::FETCH_NUM);
@@ -420,7 +420,7 @@ function follow($id, $id_to_follow) {
     try {
     $db = \Db::dbc();
 
-    $sql = "INSERT INTO `SUIVRE` (`IDUSER`, `IDUSER_1`, `NOTIF`) VALUES ('$id', '$id_to_follow', '1')";
+    $sql = "INSERT INTO `SUIVRE` (`ID_USER`, `ID_USER_1`, `NOTIF`) VALUES ('$id', '$id_to_follow', '1')";
     $db->query($sql);
 
   } catch (\PDOException $e) {
@@ -440,7 +440,7 @@ function unfollow($id, $id_to_unfollow) {
     try {
     $db = \Db::dbc();
 
-    $sql = "DELETE FROM `SUIVRE` WHERE `IDUSER` = :id AND `IDUSER_1` = :id_to_unfollow";
+    $sql = "DELETE FROM `SUIVRE` WHERE `ID_USER` = :id AND `ID_USER_1` = :id_to_unfollow";
     $sth = $db->prepare($sql);
     $sth->execute(array(':id' => $id, ':id_to_unfollow' => $id_to_unfollow));
 
