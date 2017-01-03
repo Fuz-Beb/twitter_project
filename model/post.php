@@ -234,6 +234,7 @@ function destroy($id) {
         print $e->getMessage();
         return false;
     }
+
         return true;
 }
 
@@ -255,6 +256,7 @@ function search($string) {
         print $e->getMessage();
         return NULL;
       }
+
         return get($result[0]);
 }
 
@@ -267,31 +269,34 @@ function search($string) {
 function list_all($date_sorted=false) {
 
   try {
+      $i = 0;
       $db = \Db::dbc();
 
-      if($date_sorted = 'ASC' || $date_sorted = 'DESC'){
-        $sql = "SELECT * FROM `TWEET` ORDER BY DATE_PUBLI :date_sorted";
+      if($date_sorted == 'ASC' || $date_sorted == 'DESC'){
+        $sql = "SELECT `ID_TWEET` FROM `TWEET` ORDER BY DATE_PUBLI :date_sorted";
         $sth = $db->prepare($sql);
         $sth->execute(array(':date_sorted' => $date_sorted));
       }
 
-      else
+      elseif($date_sorted == 'false')
       {
-        $sql = "SELECT * FROM `TWEET` ORDER BY DATE_PUBLI";
+        $sql = "SELECT `ID_TWEET` FROM `TWEET`";
         $sth = $db->query($sql);
       }
+
   } catch (\PDOException $e) {
       print $e->getMessage();
       return NULL;
     }
 
-/* --- BROUILLON ---
-        $result = $sth->fetch(PDO::FETCH_NUM);
-        return get($result[0]);
+        $arrayObj[] = (object) array();
 
-        SELECT * FROM `TWEET` ORDER BY DATE_PUBLI ASC
-        return [get(1),get(1),get(1),get(1),get(1),get(1)];4
-*/
+        while($result = $sth->fetch(PDO::FETCH_NUM)) {
+          $arrayObj[$i] = get($result[0]);
+          $i++;
+        }
+
+        return $arrayObj;
 }
 
 /**
@@ -301,7 +306,32 @@ function list_all($date_sorted=false) {
  * @return the list of posts objects
  */
 function list_user_posts($id, $date_sorted="DESC") {
+
+  try {
+    $i = 0;
+    $db = \Db::dbc();
+    $sql = "SELECT `ID_TWEET` FROM `TWEET` WHERE `ID_USER` = :id ORDER BY DATE_PUBLI :date_sorted";
+    $sth = $db->prepare($sql);
+    $sth->execute(array(':id' => $id, ':date_sorted' => $date_sorted));
+
+  } catch (\PDOException $e) {
+  print $e->getMessage();
+  return NULL;
+  }
+
+  $arrayObj[] = (object) array();
+
+    while($result = $sth->fetch(PDO::FETCH_NUM)) {
+      $arrayObj[$i] = get($result[0]);
+      $i++;
+    }
+
+    return $arrayObj;
+
+/* Revoir car je n'utilise pas get()
     return [get(1)];
+*/
+
 }
 
 /**
@@ -349,5 +379,27 @@ function like($uid, $pid) {
  * @return true if the post has been unliked, false else
  */
 function unlike($uid, $pid) {
-    return false;
+
+  try {
+    $db = \Db::dbc();
+
+    $sql = "SELECT * FROM `AIMER` WHERE `ID_TWEET` = :pid AND `ID_USER` = :uid";
+    $sth = $db->prepare($sql);
+    $sth->execute(array(':pid' => $pid, ':uid' => $uid));
+
+    if(mysql_num_rows($sth) == 0)
+    {
+        return true;
+    }
+
+    $sql = "DELETE FROM `AIMER` WHERE `AIMER`.`ID_TWEET` = :pid AND `AIMER`.`ID_USER` = :uid";
+    $sth = $db->prepare($sql);
+    $sth->execute(array(':pid' => $pid, ':uid' => $uid));
+
+  } catch (\PDOException $e) {
+  print $e->getMessage();
+  return false;
+  }
+
+    return true;
 }
