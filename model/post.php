@@ -369,7 +369,29 @@ function get_stats($pid) {
  * @return true if the post has been liked, false else
  */
 function like($uid, $pid) {
-    return false;
+
+  try {
+    $db = \Db::dbc();
+
+    $sql = "SELECT * FROM `AIMER` WHERE `ID_TWEET` = :pid AND `ID_USER` = :uid";
+    $sth = $db->prepare($sql);
+    $sth->execute(array(':pid' => $pid, ':uid' => $uid));
+
+    if(mysql_num_rows($sth) >= 1)
+    {
+        return true;
+    }
+
+    $sql = "INSERT INTO `AIMER` (`ID_TWEET`, `ID_USER`, `NOTIF`) VALUES (:pid, :uid, '1');";
+    $sth = $db->prepare($sql);
+    $sth->execute(array(':pid' => $pid, ':uid' => $uid));
+
+  } catch (\PDOException $e) {
+  print $e->getMessage();
+  return false;
+  }
+
+    return true;
 }
 
 /**
