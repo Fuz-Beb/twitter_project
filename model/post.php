@@ -24,7 +24,7 @@ function get($id) {
         $sth = $db->prepare("SELECT `CONTENT`, `DATE_PUBLI` FROM `TWEET` WHERE `ID_TWEET` = :id");
         $sth->execute(array(':id' => $id));
         $array = $sth->fetch(PDO::FETCH_NUM);
-        
+
         $obj = (object) array();
         $obj->id = $id;
         $obj->text = $array[0];
@@ -87,7 +87,7 @@ function get_with_joins($id) {
         return NULL;
     }
 }
- 
+
 /**
  * Create a post in db
  * @param author_id the author user's id
@@ -101,13 +101,13 @@ function get_with_joins($id) {
  * @warning this function takes care to rollback if one of the queries comes to fail.
  */
 function create($author_id, $text, $response_to=null) {
- 
+
     try {
 
         /* Calcul de la date */
         $date = new DateTime('NOW');
         $date->format('Y-m-dTH:i:sP');
-        
+
         $db = \Db::dbc();
 
         $sql = "INSERT INTO `TWEET` (`IDTWEET`, `IDUSER`, `IDTWEET_REPONSE`, `CONTENU`, `DATEPUBLI`) VALUES (NULL, '$author_id', '$response_to', '$text', '$date')";
@@ -243,7 +243,19 @@ function destroy($id) {
  * @return an array of find objects
  */
 function search($string) {
-    return [get(1)];
+
+    try {
+        $db = \Db::dbc();
+        $sql = "SELECT ID_TWEET FROM TWEET WHERE CONTENT = :string";
+        $sth = $db->prepare($sql);
+        $sth->execute(array(':string' => $string));
+        $result = $sth->fetch(PDO::FETCH_NUM);
+
+    } catch (\PDOException $e) {
+        print $e->getMessage();
+        return NULL;
+      }
+        return [get($result)];
 }
 
 /**
@@ -313,4 +325,3 @@ function like($uid, $pid) {
 function unlike($uid, $pid) {
     return false;
 }
-
