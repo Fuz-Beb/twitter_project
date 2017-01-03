@@ -344,7 +344,7 @@ function get_likes($pid) {
   try {
       $i = 0;
       $db = \Db::dbc();
-      $sth = $db->prepare("SELECT `IDUSER` FROM `AIMER` WHERE `IDTWEET` = :pid");
+      $sth = $db->prepare("SELECT `ID_USER` FROM `AIMER` WHERE `ID_TWEET` = :pid");
       $sth->execute(array(':pid' => $pid));
 
       $arrayObj[] = (object) array();
@@ -368,7 +368,26 @@ function get_likes($pid) {
  * @return the posts objects which are a response to the actual post
  */
 function get_responses($pid) {
-    return [get(2)];
+
+  try {
+      $i = 0;
+      $db = \Db::dbc();
+      $sth = $db->prepare("SELECT `ID_TWEET` FROM `TWEET` WHERE `ID_TWEET` = :pid");
+      $sth->execute(array(':pid' => $pid));
+
+      $arrayObj[] = (object) array();
+
+      while($result = $sth->fetch(PDO::FETCH_NUM)) {
+          $arrayObj[$i] = get($result[0]);
+          $i++;
+      }
+
+  } catch (\PDOException $e) {
+      print $e->getMessage();
+      return NULL;
+  }
+
+  return $arrayObj;
 }
 
 /**
