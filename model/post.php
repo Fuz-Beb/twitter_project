@@ -21,7 +21,7 @@ function get($id) {
     try {
         $db = \Db::dbc();
 
-        $sth = $db->prepare("SELECT `CONTENU`, `DATEPUBLI` FROM `TWEET` WHERE `id` = :id");
+        $sth = $db->prepare("SELECT `CONTENT`, `DATE_PUBLI` FROM `TWEET` WHERE `ID_TWEET` = :id");
         $sth->execute(array(':id' => $id));
         $array = $sth->fetch(PDO::FETCH_NUM);
         
