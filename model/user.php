@@ -20,22 +20,26 @@ function get($id) {
 
         $sth = $db->prepare("SELECT `ID_USER`, `USERNAME`, `NAME`, `PASSWORD`, `EMAIL`, `AVATAR`, `SIGN_UP` FROM `UTILISATEUR` WHERE `ID_USER` = :id");
         $sth->execute(array(':id' => $id));
-        $array = $sth->fetch(PDO::FETCH_NUM);
+        if ($array = $sth->fetch(PDO::FETCH_NUM))
+        {
+            $obj = (object) array();
+            $obj->id = $array[0];
+            $obj->username = $array[1];
+            $obj->name = $array[2];
+            $obj->password = $array[3];
+            $obj->email = $array[4];
+            $obj->avatar = $array[5];
+            $obj->sign_up = $array[6];
 
-        $obj = (object) array();
-        $obj->id = $array[0];
-        $obj->username = $array[1];
-        $obj->name = $array[2];
-        $obj->password = $array[3];
-        $obj->email = $array[4];
-        $obj->avatar = $array[5];
-        $obj->inscri = $array[6];
-
-        return $obj;
+            return $obj;
+        }
+        else
+        {
+            return NULL;
+        }
 
     } catch (\PDOException $e) {
         print $e->getMessage();
-        return NULL;
     }
 }
 
@@ -186,12 +190,38 @@ function search($string) {
 
     try {
         $db = \Db::dbc();
-
-        $sql = "SELECT * FROM `UTILISATEUR` WHERE `NAME` LIKE :string OR `USERNAME` LIKE :string";
+        $i = 0;
+        $sql = "SELECT `ID_USER` FROM `UTILISATEUR` WHERE `USERNAME` LIKE :string OR `NAME` LIKE :string";
         $sth = $db->prepare($sql);
         $sth->execute(array(':string' => $string));
 
-        return $sth->fetchAll(PDO::FETCH_OBJ);
+        if ($result = $sth->fetch(PDO::FETCH_NUM)) {
+
+            $arrayObj[] = (object) array();
+            $arrayObj[0] = get($result[0]);
+            $i++; 
+
+            while($result = $sth->fetch(PDO::FETCH_NUM)) {
+                    $arrayObj[$i] = get($result[0]);
+                    $i++;                
+            }
+        }
+        else
+        {
+            $sql = "SELECT `ID_USER`, INSTR( `USERNAME`, '$string' ), INSTR( `NAME`, '$string') FROM `UTILISATEUR`";
+            $sth = $db->query($sql);
+
+            $arrayObj[] = (object) array();
+
+            while($result = $sth->fetch(PDO::FETCH_NUM)) {
+                if ($result[1] !== 0 || $result[1] !== 0)
+                {
+                    $arrayObj[$i] = get($result[0]);
+                    $i++;                
+                }
+            }
+        }
+        return $arrayObj;
 
     } catch (\PDOException $e) {
         print $e->getMessage();
@@ -394,17 +424,14 @@ function check_auth_id($id, $password) {
     $result = $sth->fetch(PDO::FETCH_NUM);
 
     /* Vérification du password */
-    /** ATTENTION **/
-    /* La différence entre les deux fonctions ne sont pas respecté car dans les units tests, le password fourni n'est pas haché
-        donc j'ai repris la même méthode que la fonction d'au dessus avec password_verify */
-    if(password_verify($password, $result[0]))
+    if(strcmp($password, $result[0]))
         return get($id);
     else
         return NULL;
 
   } catch (\PDOException $e) {
     print $e->getMessage();
-    return null;
+    return NULL;
   }
 
 }
