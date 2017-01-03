@@ -306,7 +306,31 @@ function list_all($date_sorted=false) {
  * @return the list of posts objects
  */
 function list_user_posts($id, $date_sorted="DESC") {
+
+  $i = 0;
+  $db = \Db::dbc();
+  $sql = "SELECT `ID_TWEET` FROM `TWEET` WHERE `ID_USER` = :id ORDER BY DATE_PUBLI :date_sorted";
+  $sth = $db->prepare($sql);
+  $sth->execute(array(':id' => $id, ':date_sorted' => $date_sorted));
+
+  } catch (\PDOException $e) {
+  print $e->getMessage();
+  return NULL;
+  }
+
+  $arrayObj[] = (object) array();
+
+    while($result = $sth->fetch(PDO::FETCH_NUM)) {
+      $arrayObj[$i] = get($result[0]);
+      $i++;
+    }
+
+    return $arrayObj;
+
+/* Revoir car je n'utilise pas get()
     return [get(1)];
+*/
+
 }
 
 /**
