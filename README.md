@@ -1,7 +1,8 @@
 # db-project
 
 ## The project
-The goal is to fill out the model functions so that this twitter clone works just file
+The goal is to fill out the model functions so that this twitter clone works just file.
+To setup the project and see the work to be achieved, see pdfs in `instructions/`
 
 ## Requirements
 * PHP >= 7.0
@@ -18,7 +19,7 @@ The goal is to fill out the model functions so that this twitter clone works jus
 * Your app and test databases must be set with all the tables
 * Edit the `config/db.yaml.example` file (replacing the infos with the MySQL connection infos) and save as `config/db.yaml`
 
-You can launch a builtin server by launching `php -S localhost:8888 -t www` or launch the tests with the `tests.bat` script
+You can launch a builtin server by launching `php -S localhost:8888 -t www` or launch the tests (see how on pdf leaflets in `instructions/`)
 
 The website is available at http://localhost:8888
 

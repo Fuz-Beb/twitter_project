@@ -23,7 +23,7 @@
         "suggest": {
             "symfony/console": "For validating YAML files using the lint command"
         },
-        "time": "2016-12-10 10:07:06",
+        "time": "2016-12-10T10:07:06+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -74,7 +74,7 @@
         "require": {
             "php": ">=5.6"
         },
-        "time": "2016-10-03 07:35:21",
+        "time": "2016-10-03T07:35:21+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -119,7 +119,7 @@
         "require": {
             "php": ">=5.6.0"
         },
-        "time": "2015-07-28 20:34:47",
+        "time": "2015-07-28T20:34:47+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -166,7 +166,7 @@
         "require-dev": {
             "phpunit/phpunit": "~4.4"
         },
-        "time": "2015-11-11 19:50:13",
+        "time": "2015-11-11T19:50:13+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -222,7 +222,7 @@
         "require-dev": {
             "phpunit/phpunit": "~5"
         },
-        "time": "2016-01-28 13:25:10",
+        "time": "2016-01-28T13:25:10+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -272,7 +272,7 @@
         "suggest": {
             "ext-uopz": "*"
         },
-        "time": "2015-10-12 03:26:01",
+        "time": "2015-10-12T03:26:01+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -324,7 +324,7 @@
             "ext-mbstring": "*",
             "phpunit/phpunit": "~4.4"
         },
-        "time": "2016-06-17 09:04:28",
+        "time": "2016-06-17T09:04:28+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -391,7 +391,7 @@
         "require-dev": {
             "phpunit/phpunit": "^5.0"
         },
-        "time": "2016-11-26 07:53:53",
+        "time": "2016-11-26T07:53:53+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -443,7 +443,7 @@
         "require-dev": {
             "phpunit/phpunit": "~4.8"
         },
-        "time": "2015-12-08 07:14:41",
+        "time": "2015-12-08T07:14:41+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -499,7 +499,7 @@
         "require-dev": {
             "phpunit/phpunit": "~4.4"
         },
-        "time": "2016-11-19 09:18:40",
+        "time": "2016-11-19T09:18:40+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -567,7 +567,7 @@
             "phpunit/phpunit": "~4.0",
             "squizlabs/php_codesniffer": "~2.0"
         },
-        "time": "2015-06-14 21:17:01",
+        "time": "2015-06-14T21:17:01+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -616,7 +616,7 @@
         "require": {
             "php": ">=5.3.3"
         },
-        "time": "2015-06-21 13:50:34",
+        "time": "2015-06-21T13:50:34+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -671,7 +671,7 @@
         "suggest": {
             "ext-soap": "*"
         },
-        "time": "2016-12-08 20:27:08",
+        "time": "2016-12-08T20:27:08+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -723,7 +723,7 @@
         "require-dev": {
             "phpunit/phpunit": "~4|~5"
         },
-        "time": "2016-05-12 18:03:57",
+        "time": "2016-05-12T18:03:57+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -766,7 +766,7 @@
         "require": {
             "php": ">=5.3.3"
         },
-        "time": "2016-10-03 07:40:28",
+        "time": "2016-10-03T07:40:28+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -818,7 +818,7 @@
         "require-dev": {
             "phpunit/phpunit": "~5"
         },
-        "time": "2016-02-13 06:45:14",
+        "time": "2016-02-13T06:45:14+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -866,7 +866,7 @@
         "require-dev": {
             "phpunit/phpunit": "~4.2"
         },
-        "time": "2016-11-15 14:06:22",
+        "time": "2016-11-15T14:06:22+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -928,7 +928,7 @@
             "ext-xdebug": ">=2.4.0",
             "ext-xmlwriter": "*"
         },
-        "time": "2016-12-20 15:22:42",
+        "time": "2016-12-20T15:22:42+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -985,7 +985,7 @@
             "dflydev/markdown": "~1.0",
             "erusev/parsedown": "~1.0"
         },
-        "time": "2015-02-03 12:10:50",
+        "time": "2015-02-03T12:10:50+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1037,7 +1037,7 @@
             "phpspec/phpspec": "^2.0",
             "phpunit/phpunit": "^4.8 || ^5.6.5"
         },
-        "time": "2016-11-21 14:58:47",
+        "time": "2016-11-21T14:58:47+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1098,7 +1098,7 @@
             "doctrine/collections": "1.*",
             "phpunit/phpunit": "~4.1"
         },
-        "time": "2016-10-31 17:19:45",
+        "time": "2016-10-31T17:19:45+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -1170,7 +1170,7 @@
             "ext-xdebug": "*",
             "phpunit/php-invoker": "~1.1"
         },
-        "time": "2016-10-03 13:04:15",
+        "time": "2016-10-03T13:04:15+00:00",
         "bin": [
             "phpunit"
         ],
@@ -1223,7 +1223,7 @@
         "require-dev": {
             "zetacomponents/unit-test": "*"
         },
-        "time": "2014-09-19 03:28:34",
+        "time": "2014-09-19T03:28:34+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -1291,7 +1291,7 @@
         "require-dev": {
             "zetacomponents/unit-test": "dev-master"
         },
-        "time": "2013-12-19 11:40:00",
+        "time": "2013-12-19T11:40:00+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -1359,7 +1359,7 @@
             "zendframework/zend-serializer": "Zend\\Serializer component",
             "zendframework/zend-servicemanager": "To support hydrator plugin manager usage"
         },
-        "time": "2016-04-12 21:17:31",
+        "time": "2016-04-12T21:17:31+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1418,7 +1418,7 @@
             "zendframework/zend-serializer": "^2.6.1, to use the SerializableStrategy",
             "zendframework/zend-servicemanager": "^2.7.5 || ^3.0.3, to support hydrator plugin manager usage"
         },
-        "time": "2016-02-18 22:38:26",
+        "time": "2016-02-18T22:38:26+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1459,7 +1459,7 @@
             "reference": "fc08354828f8fd3245f77a66b9e23a6bca48297e",
             "shasum": ""
         },
-        "time": "2014-12-30 15:22:37",
+        "time": "2014-12-30T15:22:37+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -1503,7 +1503,7 @@
             "ocramius/proxy-manager": "ProxyManager 0.5.* to handle lazy initialization of services",
             "zendframework/zend-di": "Zend\\Di component"
         },
-        "time": "2016-12-19 19:14:29",
+        "time": "2016-12-19T19:14:29+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1554,7 +1554,7 @@
             "zendframework/zend-json-server": "For implementing JSON-RPC servers",
             "zendframework/zend-xml2json": "For converting XML documents to JSON"
         },
-        "time": "2016-04-01 02:34:00",
+        "time": "2016-04-01T02:34:00+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1609,7 +1609,7 @@
             "zendframework/zend-math": "(^2.6 || ^3.0) To support Python Pickle serialization",
             "zendframework/zend-servicemanager": "(^2.7.5 || ^3.0.3) To support plugin manager support"
         },
-        "time": "2016-06-21 17:01:55",
+        "time": "2016-06-21T17:01:55+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1679,7 +1679,7 @@
             "zendframework/zend-validator": "You should install this package to use the provided validators",
             "zendframework/zend-view": "You should install this package to use the provided view helpers"
         },
-        "time": "2016-06-07 21:08:30",
+        "time": "2016-06-07T21:08:30+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1740,7 +1740,7 @@
             "zendframework/zend-servicemanager": "Zend\\ServiceManager component, for using the filter chain functionality",
             "zendframework/zend-uri": "Zend\\Uri component, for the UriNormalize filter"
         },
-        "time": "2016-04-18 18:32:43",
+        "time": "2016-04-18T18:32:43+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1802,7 +1802,7 @@
             "zendframework/zend-json": "Zend\\Json to use the Json reader or writer classes",
             "zendframework/zend-servicemanager": "Zend\\ServiceManager for use with the Config Factory to retrieve reader and writer instances"
         },
-        "time": "2016-02-04 23:01:10",
+        "time": "2016-02-04T23:01:10+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1856,7 +1856,7 @@
             "container-interop/container-interop": "^1.1.0, to use the lazy listeners feature",
             "zendframework/zend-stdlib": "^2.7.3 || ^3.0, to use the FilterChain feature"
         },
-        "time": "2016-12-19 21:47:12",
+        "time": "2016-12-19T21:47:12+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1925,7 +1925,7 @@
             "zendframework/zend-serializer": "Zend\\Serializer component",
             "zendframework/zend-session": "Zend\\Session component"
         },
-        "time": "2016-12-16 11:35:47",
+        "time": "2016-12-16T11:35:47+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1955,69 +1955,6 @@
         ]
     },
     {
-        "name": "twig/twig",
-        "version": "v1.29.0",
-        "version_normalized": "1.29.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/twigphp/Twig.git",
-            "reference": "74f723e542368ca2080b252740be5f1113ebb898"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/twigphp/Twig/zipball/74f723e542368ca2080b252740be5f1113ebb898",
-            "reference": "74f723e542368ca2080b252740be5f1113ebb898",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.2.7"
-        },
-        "require-dev": {
-            "symfony/debug": "~2.7",
-            "symfony/phpunit-bridge": "~3.2@dev"
-        },
-        "time": "2016-12-13 17:28:18",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.29-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Twig_": "lib/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-3-Clause"
-        ],
-        "authors": [
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com",
-                "homepage": "http://fabien.potencier.org",
-                "role": "Lead Developer"
-            },
-            {
-                "name": "Armin Ronacher",
-                "email": "armin.ronacher@active-4.com",
-                "role": "Project Founder"
-            },
-            {
-                "name": "Twig Team",
-                "homepage": "http://twig.sensiolabs.org/contributors",
-                "role": "Contributors"
-            }
-        ],
-        "description": "Twig, the flexible, fast, and secure template language for PHP",
-        "homepage": "http://twig.sensiolabs.org",
-        "keywords": [
-            "templating"
-        ]
-    },
-    {
         "name": "symfony/polyfill-mbstring",
         "version": "v1.3.0",
         "version_normalized": "1.3.0.0",
@@ -2038,7 +1975,7 @@
         "suggest": {
             "ext-mbstring": "For best performance"
         },
-        "time": "2016-11-14 01:06:16",
+        "time": "2016-11-14T01:06:16+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2111,7 +2048,7 @@
             "symfony/config": "",
             "symfony/yaml": ""
         },
-        "time": "2016-07-30 07:22:48",
+        "time": "2016-07-30T07:22:48+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2186,7 +2123,7 @@
             "symfony/property-access": "For using the 2.4 Validator API",
             "symfony/yaml": ""
         },
-        "time": "2016-12-08 15:59:39",
+        "time": "2016-12-08T15:59:39+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2237,7 +2174,7 @@
         "require": {
             "php": ">=5.3.9"
         },
-        "time": "2016-06-29 05:29:29",
+        "time": "2016-06-29T05:29:29+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2288,7 +2225,7 @@
         "require": {
             "php": ">=5.3.9"
         },
-        "time": "2016-11-24 00:43:03",
+        "time": "2016-11-24T00:43:03+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2350,7 +2287,7 @@
             "symfony/dependency-injection": "",
             "symfony/http-kernel": ""
         },
-        "time": "2016-10-13 01:43:15",
+        "time": "2016-10-13T01:43:15+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2401,7 +2338,7 @@
         "require": {
             "php": ">=5.3.0"
         },
-        "time": "2016-10-10 12:19:37",
+        "time": "2016-10-10T12:19:37+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2458,7 +2395,7 @@
             "symfony/class-loader": "~2.8|~3.0",
             "symfony/http-kernel": "~2.8|~3.0"
         },
-        "time": "2016-07-30 07:22:48",
+        "time": "2016-07-30T07:22:48+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2521,7 +2458,7 @@
             "symfony/event-dispatcher": "",
             "symfony/process": ""
         },
-        "time": "2016-12-06 11:59:35",
+        "time": "2016-12-06T11:59:35+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2572,7 +2509,7 @@
         "require": {
             "php": ">=5.5.9"
         },
-        "time": "2016-07-20 05:43:46",
+        "time": "2016-07-20T05:43:46+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2630,7 +2567,7 @@
         "suggest": {
             "symfony/yaml": "To use the yaml reference dumper"
         },
-        "time": "2016-12-10 08:21:45",
+        "time": "2016-12-10T08:21:45+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2682,7 +2619,7 @@
             "ext-tokenizer": "*",
             "php": ">=5.3"
         },
-        "time": "2015-09-19 14:15:08",
+        "time": "2015-09-19T14:15:08+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2736,7 +2673,7 @@
             "mockery/mockery": "~0.8",
             "phpunit/phpunit": "~4.0"
         },
-        "time": "2016-05-21 08:42:32",
+        "time": "2016-05-21T08:42:32+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2787,7 +2724,7 @@
         "require-dev": {
             "phpunit/phpunit": "~4.0"
         },
-        "time": "2016-02-02 13:00:08",
+        "time": "2016-02-02T13:00:08+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -2827,7 +2764,7 @@
         "require": {
             "php": ">=5.3.9"
         },
-        "time": "2016-12-13 09:38:12",
+        "time": "2016-12-13T09:38:12+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2882,7 +2819,7 @@
         "require-dev": {
             "phpunit/phpunit": "~3.7"
         },
-        "time": "2013-08-06 21:07:42",
+        "time": "2013-08-06T21:07:42+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -2953,7 +2890,7 @@
             "ruflin/elastica": "Allow sending log messages to an Elastic Search server",
             "sentry/sentry": "Allow sending log messages to a Sentry server"
         },
-        "time": "2016-11-26 00:15:39",
+        "time": "2016-11-26T00:15:39+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -3003,7 +2940,7 @@
         "require": {
             "php": ">=5.3.2"
         },
-        "time": "2014-09-09 13:34:57",
+        "time": "2014-09-09T13:34:57+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -3042,76 +2979,6 @@
         ]
     },
     {
-        "name": "doctrine/annotations",
-        "version": "v1.3.0",
-        "version_normalized": "1.3.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/doctrine/annotations.git",
-            "reference": "30e07cf03edc3cd3ef579d0dd4dd8c58250799a5"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/doctrine/annotations/zipball/30e07cf03edc3cd3ef579d0dd4dd8c58250799a5",
-            "reference": "30e07cf03edc3cd3ef579d0dd4dd8c58250799a5",
-            "shasum": ""
-        },
-        "require": {
-            "doctrine/lexer": "1.*",
-            "php": "^5.6 || ^7.0"
-        },
-        "require-dev": {
-            "doctrine/cache": "1.*",
-            "phpunit/phpunit": "^5.6.1"
-        },
-        "time": "2016-10-24 11:45:47",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.4.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Doctrine\\Common\\Annotations\\": "lib/Doctrine/Common/Annotations"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Roman Borschel",
-                "email": "roman@code-factory.org"
-            },
-            {
-                "name": "Benjamin Eberlei",
-                "email": "kontakt@beberlei.de"
-            },
-            {
-                "name": "Guilherme Blanco",
-                "email": "guilhermeblanco@gmail.com"
-            },
-            {
-                "name": "Jonathan Wage",
-                "email": "jonwage@gmail.com"
-            },
-            {
-                "name": "Johannes Schmitt",
-                "email": "schmittjoh@gmail.com"
-            }
-        ],
-        "description": "Docblock Annotations Parser",
-        "homepage": "http://www.doctrine-project.org",
-        "keywords": [
-            "annotations",
-            "docblock",
-            "parser"
-        ]
-    },
-    {
         "name": "phpoption/phpoption",
         "version": "1.5.0",
         "version_normalized": "1.5.0.0",
@@ -3132,7 +2999,7 @@
         "require-dev": {
             "phpunit/phpunit": "4.7.*"
         },
-        "time": "2015-07-25 16:39:46",
+        "time": "2015-07-25T16:39:46+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -3181,7 +3048,7 @@
         "require": {
             "phpoption/phpoption": "1.*"
         },
-        "time": "2015-05-17 12:39:23",
+        "time": "2015-05-17T12:39:23+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -3231,7 +3098,7 @@
         "require": {
             "phpoption/phpoption": ">=0.9,<2.0-dev"
         },
-        "time": "2012-11-18 18:08:43",
+        "time": "2012-11-18T18:08:43+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -3272,7 +3139,7 @@
             "doctrine/cache": "~1.0",
             "symfony/cache": "~3.1"
         },
-        "time": "2016-12-05 10:18:33",
+        "time": "2016-12-05T10:18:33+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -3347,7 +3214,7 @@
         "suggest": {
             "symfony/yaml": "Required if you'd like to serialize data to YAML format."
         },
-        "time": "2016-11-13 10:20:11",
+        "time": "2016-11-13T10:20:11+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -3398,7 +3265,7 @@
         "require": {
             "php": ">=5.3.3"
         },
-        "time": "2012-08-16 17:13:03",
+        "time": "2012-08-16T17:13:03+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -3442,7 +3309,7 @@
         "require": {
             "php": "^5.3 || ^7.0"
         },
-        "time": "2016-11-14 17:59:58",
+        "time": "2016-11-14T17:59:58+00:00",
         "bin": [
             "bin/jsonlint"
         ],
@@ -3495,7 +3362,7 @@
             "phpdocumentor/phpdocumentor": "~2",
             "phpunit/phpunit": "~3.7"
         },
-        "time": "2016-01-25 15:43:01",
+        "time": "2016-01-25T15:43:01+00:00",
         "bin": [
             "bin/validate-json"
         ],
@@ -3566,7 +3433,7 @@
             "mikey179/vfsstream": "1.1.0",
             "phpunit/phpunit": "3.7.*"
         },
-        "time": "2013-10-30 16:51:34",
+        "time": "2013-10-30T16:51:34+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -3627,7 +3494,7 @@
             "mikey179/vfsstream": "1.1.0",
             "phpunit/phpunit": "3.7.*"
         },
-        "time": "2013-10-30 17:23:01",
+        "time": "2013-10-30T17:23:01+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -3679,7 +3546,7 @@
         "require": {
             "php": ">=5.3.0"
         },
-        "time": "2016-11-02 15:56:58",
+        "time": "2016-11-02T15:56:58+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -3723,7 +3590,7 @@
         "require": {
             "php": ">=5.3.0"
         },
-        "time": "2013-11-22 08:30:29",
+        "time": "2013-11-22T08:30:29+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -3777,7 +3644,7 @@
             "cilex/cilex": "1.*@dev",
             "silex/silex": "1.*@dev"
         },
-        "time": "2012-12-19 10:50:58",
+        "time": "2012-12-19T10:50:58+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -3845,7 +3712,7 @@
             "symfony/validator": ">=1.0.0",
             "symfony/yaml": ">=1.0.0"
         },
-        "time": "2014-03-29 14:03:13",
+        "time": "2014-03-29T14:03:13+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -3929,7 +3796,7 @@
             "ext-twig": "Enabling the twig extension improves the generation of twig based templates.",
             "ext-xslcache": "Enabling the XSLCache extension improves the generation of xml based templates."
         },
-        "time": "2016-05-22 09:50:56",
+        "time": "2016-05-22T09:50:56+00:00",
         "bin": [
             "bin/phpdoc.php",
             "bin/phpdoc"
@@ -3964,6 +3831,139 @@
             "dga",
             "documentation",
             "phpdoc"
+        ]
+    },
+    {
+        "name": "twig/twig",
+        "version": "v1.30.0",
+        "version_normalized": "1.30.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/twigphp/Twig.git",
+            "reference": "c6ff71094fde15d12398eaba029434b013dc5e59"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/twigphp/Twig/zipball/c6ff71094fde15d12398eaba029434b013dc5e59",
+            "reference": "c6ff71094fde15d12398eaba029434b013dc5e59",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.2.7"
+        },
+        "require-dev": {
+            "symfony/debug": "~2.7",
+            "symfony/phpunit-bridge": "~3.2@dev"
+        },
+        "time": "2016-12-23T11:06:22+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.30-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Twig_": "lib/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "BSD-3-Clause"
+        ],
+        "authors": [
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com",
+                "homepage": "http://fabien.potencier.org",
+                "role": "Lead Developer"
+            },
+            {
+                "name": "Armin Ronacher",
+                "email": "armin.ronacher@active-4.com",
+                "role": "Project Founder"
+            },
+            {
+                "name": "Twig Team",
+                "homepage": "http://twig.sensiolabs.org/contributors",
+                "role": "Contributors"
+            }
+        ],
+        "description": "Twig, the flexible, fast, and secure template language for PHP",
+        "homepage": "http://twig.sensiolabs.org",
+        "keywords": [
+            "templating"
+        ]
+    },
+    {
+        "name": "doctrine/annotations",
+        "version": "v1.3.1",
+        "version_normalized": "1.3.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/doctrine/annotations.git",
+            "reference": "bd4461328621bde0ae6b1b2675fbc6aca4ceb558"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/doctrine/annotations/zipball/bd4461328621bde0ae6b1b2675fbc6aca4ceb558",
+            "reference": "bd4461328621bde0ae6b1b2675fbc6aca4ceb558",
+            "shasum": ""
+        },
+        "require": {
+            "doctrine/lexer": "1.*",
+            "php": "^5.6 || ^7.0"
+        },
+        "require-dev": {
+            "doctrine/cache": "1.*",
+            "phpunit/phpunit": "^5.6.1"
+        },
+        "time": "2016-12-30T15:59:45+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.4.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Doctrine\\Common\\Annotations\\": "lib/Doctrine/Common/Annotations"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Roman Borschel",
+                "email": "roman@code-factory.org"
+            },
+            {
+                "name": "Benjamin Eberlei",
+                "email": "kontakt@beberlei.de"
+            },
+            {
+                "name": "Guilherme Blanco",
+                "email": "guilhermeblanco@gmail.com"
+            },
+            {
+                "name": "Jonathan Wage",
+                "email": "jonwage@gmail.com"
+            },
+            {
+                "name": "Johannes Schmitt",
+                "email": "schmittjoh@gmail.com"
+            }
+        ],
+        "description": "Docblock Annotations Parser",
+        "homepage": "http://www.doctrine-project.org",
+        "keywords": [
+            "annotations",
+            "docblock",
+            "parser"
         ]
     }
 ]

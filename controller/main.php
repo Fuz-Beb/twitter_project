@@ -7,9 +7,9 @@ function main() {
         $f = array_map(function($u){
             return $u->id;
         }, \Model\User\get_followings($user->id));
-        $p = \Model\Post\list_all("DESC");
-        foreach($p as $post) {
-            if(in_array($p->author->id, $f)) {
+        $all_posts = \Model\Post\list_all("DESC");
+        foreach($all_posts as $p) {
+            if($p->author->id == $user->id || in_array($p->author->id, $f)) {
                 $posts[] = $p;
             }
         }

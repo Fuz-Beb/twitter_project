@@ -119,7 +119,12 @@ function signup($form, $files) {
         header("Location: signup.php");
         return;
     }
-    if($files["avatar"]["tmp_name"] !== null) {
+    if($files["avatar"]["error"] != \UPLOAD_ERR_NO_FILE) {
+        if($files["avatar"]["error"] != \UPLOAD_ERR_OK) {
+            \Session\set_error("There was an error during signup : the avatar couldn't be uploaded.");
+            header("Location: signup.php");
+            return;
+        }
         if (($avatar = handle_avatar($files["avatar"]["name"], $files["avatar"]["tmp_name"], $username)) === null) {
             \Session\set_error("There was an error during signup : the avatar couldn't be uploaded.");
             header("Location: signup.php");
@@ -194,7 +199,12 @@ function update_profile($form, $files) {
             return;
         }
     }
-    if($files["avatar"]["tmp_name"] !== null) {
+    if($files["avatar"]["error"] != \UPLOAD_ERR_NO_FILE) {
+        if($files["avatar"]["error"] != \UPLOAD_ERR_OK) {
+            \Session\set_error("There was an error during signup : the avatar couldn't be uploaded.");
+            header("Location: signup.php");
+            return;
+        }
         if (($avatar = handle_avatar($files["avatar"]["name"], $files["avatar"]["tmp_name"], $username)) === null) {
             \Session\set_error("There was an error during signup : the avatar couldn't be uploaded.");
             header("Location: signup.php");

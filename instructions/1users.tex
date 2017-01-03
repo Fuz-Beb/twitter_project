@@ -1,6 +1,6 @@
 \documentclass[twoside,a4paper,12pt]{article}
 
-\usepackage[utf8]{inputenc}
+\usepackage[utf8x]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[colorlinks,
   citecolor=black,linkcolor=black,urlcolor=black]{hyperref}
@@ -10,6 +10,8 @@
 \usepackage{pstricks}
 \usepackage{pgfplots}
 \usepackage{listings}
+\usepackage{xcolor}
+\usepackage[tikz]{bclogo}
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
@@ -128,10 +130,13 @@ The User entity represents a user and its properties:
 \item its avatar (or profile picture)
 \end{itemize}
 
-\subsection{\texttt{hash\_password(\$password)}}
+\subsection{Creation, getting, password management and authentication}
+The following functions have to be coded before running the unit tests. They are in charge of handling both the creation and the fetching of the user objects.
+
+\subsubsection{\texttt{hash\_password(\$password)}}
 This function takes a clear password as a parameter and returns a hashed version of it.
 
-\subsection{\texttt{create(\$username, \$name, \$password, \$email, \$avatar\_path)}}
+\subsubsection{\texttt{create(\$username, \$name, \$password, \$email, \$avatar\_path)}}
 
 This function inserts a user in database. \textit{It is to be noted that the password must be hashed (using \texttt{hash\_password(\$password)})}
 
@@ -139,7 +144,7 @@ The function returns either the id of the newly inserted user. If there was a pr
 
 It doesn't check whether the username is already taken or not.
 
-\subsection{\texttt{get(\$id)}}
+\subsubsection{\texttt{get(\$id)}}
 This function gets a post with a given id (the one given in parameter). Returns \texttt{null} if no user with the given id were found.
 
 The application asks for a particular output: \texttt{get(\$id)} must return a stdClass PHP object. Such an object can be declared as follows:
@@ -163,32 +168,44 @@ $o = (object) array(
 );
 \end{lstlisting}
 
-\subsection{\texttt{modify(\$uid, \$username, \$name, \$email)}}
-This function updates a user whose id is \texttt{\$uid}. It doesn't check whether the new username is already taken or not. It returns a boolean which gives the state of the query.
-
-\subsection{\texttt{change\_password(\$uid, \$new\_password)}}
-This function updates only a user's password. This function hashes the new password. It returns a boolean.
-
-\subsection{\texttt{change\_avatar(\$uid, \$avatar\_path)}}
-This function changes the avatar of the user. The provided path is a temporary path and therefore the file has to be saved somewhere else. Returns a boolean.
-
-\subsection{\texttt{destroy(\$id)}}
-This function deletes a user entry. It returns a boolean.
-
-\subsection{\texttt{search(\$string)}}
-This function searches for users by query on both username and displayed name.
-
-\subsection{\texttt{list\_all()}}
-This function returns an array of every users objects (same return format as in \texttt{get(\$id)}).
-
-\subsection{\texttt{get\_by\_username(\$username)}}
+\subsubsection{\texttt{get\_by\_username(\$username)}}
 This function returns a user matching the given username (same return format as in \texttt{get(\$id)}). Returns \texttt{null} if no user were found.
 
-\subsection{\texttt{check\_auth(\$username, \$password)}}
+\subsubsection{\texttt{check\_auth(\$username, \$password)}}
 Tries to authenticate a username with a given password. Returns the user object (same return format as in \texttt{get(\$id)}) if everything went fine. Returns \texttt{null} else. \textit{This function \textbf{does} need to hash the password}
 
-\subsection{\texttt{check\_auth\_id(\$id, \$password)}}
+\subsubsection{\texttt{check\_auth\_id(\$id, \$password)}}
 Tries to authenticate a user id with a given password. Returns the user object (same return format as in \texttt{get(\$id)}) if everything went fine. Returns \texttt{null} else. \textit{This function \textbf{doesn't} need to hash the password}
+
+\subsection{User modification and deletion}
+After the user objects being created, its attributes can be modified. The following functions are in charge of this and should be coded before running the unit tests.
+
+\subsubsection{\texttt{modify(\$uid, \$username, \$name, \$email)}}
+This function updates a user whose id is \texttt{\$uid}. It doesn't check whether the new username is already taken or not. It returns a boolean which gives the state of the query.
+
+
+\subsubsection{\texttt{change\_password(\$uid, \$new\_password)}}
+This function updates only a user's password. This function hashes the new password. It returns a boolean.
+
+\subsubsection{\texttt{change\_avatar(\$uid, \$avatar\_path)}}
+This function changes the avatar of the user. The provided path is a temporary path and therefore the file has to be saved somewhere else. Returns a boolean.
+
+\subsubsection{\texttt{destroy(\$id)}}
+This function deletes a user entry. It returns a boolean.
+
+\begin{bclogo}[logo=\bcattention, noborder=true, barre=none]{Important!}
+	The deletion behaviour must be allowing deleting user which is following a user or followed by a user. \textbf{To see and modify the deletion policy in phpMyAdmin, you must go in the table view → Structure → Relation view.}
+		
+\end{bclogo}
+
+\subsection{Searching and listing}
+The user objects can be searched for or listed. The two following functions can be coded separately.
+
+\subsubsection{\texttt{search(\$string)}}
+This function searches for users by query on both username and displayed name.
+
+\subsubsection{\texttt{list\_all()}}
+This function returns an array of every users objects (same return format as in \texttt{get(\$id)}).
 
 \section{Following users}
 
@@ -199,6 +216,8 @@ Users can follow each others. Following someone enables a user to receive in the
 \item A user's followers are the users following him/her
 \item A user's following are the users he/she follows
 \end{itemize}
+
+Every functions relative to following must all be coded before running the unit tests. 
 
 \subsection{\texttt{follow(\$id, \$id\_to\_follow)}}
 This function creates a "follow" association between two users. Returns a boolean.

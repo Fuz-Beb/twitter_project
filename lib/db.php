@@ -25,9 +25,8 @@ class Db {
     }
 
     public static function flush() {
-        foreach(self::$connection->query("SHOW TABLES") as $t)
-        {
-            self::$connection->query("DELETE FROM " . $t[0]);
+        foreach(self::$connection->query("SHOW TABLES") as $t) {
+            self::$connection->query("SET foreign_key_checks=0; DELETE FROM " . $t[0] . "");
         }
     }
 }

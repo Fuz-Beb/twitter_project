@@ -9,8 +9,12 @@ function post_page($id) {
     }
     $responses = \Model\Post\get_responses($id);
     $stats = \Model\Post\get_stats($id);
+    $user = \Session\get_user();
+    if($user) {
+        $liked = in_array($user->id, array_map(function($el) { return $el->id; }, $post->likes));
+    }
     foreach($responses as $response) {
-        $response->responses = \Model\Post\get_responses($id);
+        $response->responses = \Model\Post\get_responses($response->id);
     }
     require '../view/post.php';
 }
@@ -86,12 +90,33 @@ function like($id) {
         header($_SERVER["SERVER_PROTOCOL"]." 403 Forbidden", true, 403);
         return;
     }
-    if(\Model\Post\like($id)) {
+    if(\Model\Post\like($user->id, $id)) {
         \Session\set_success("Your like was counted.");
         header("Location: post.php?id=".$id);
     }
     else {
         \Session\set_error("An error occured");
+        header("Location: post.php?id=".$id);        
+    }
+}
+
+function unlike($id) {
+    $post = \Model\Post\get($id);
+    if(!$post) {
+        header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
+        return;
+    }
+    $user = \Session\get_user();
+    if(!$user) {
+        header($_SERVER["SERVER_PROTOCOL"]." 403 Forbidden", true, 403);
+        return;
+    }
+    if(\Model\Post\unlike($user->id, $id)) {
+        \Session\set_success("Your like was removed.");
+        header("Location: post.php?id=".$id);
+    }
+    else {
+        \Session\set_error("An error occured.");
         header("Location: post.php?id=".$id);        
     }
 }

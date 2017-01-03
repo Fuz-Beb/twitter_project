@@ -2,7 +2,7 @@
 require '../lib/main.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if(isset($_GET['id'])) {
-        Controller\Post\response($_GET['id'], $_POST);
+        Controller\Post\respond($_GET['id'], $_POST);
     }
     else {
         Controller\Post\post($_POST);
@@ -11,6 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 elseif(isset($_GET['id'])) {
     if(isset($_GET['like'])) {
         Controller\Post\like($_GET['id']);
+    }
+    else if(isset($_GET['unlike'])) {
+        Controller\Post\unlike($_GET['id']);
     }
     else {
         Controller\Post\post_page($_GET['id']);
