@@ -255,7 +255,7 @@ function search($string) {
         print $e->getMessage();
         return NULL;
       }
-        return [get($result)];
+        return get($result[0]);
 }
 
 /**
@@ -265,7 +265,33 @@ function search($string) {
  * @warning this function does not return the passwords
  */
 function list_all($date_sorted=false) {
-    return [get(1),get(1),get(1),get(1),get(1),get(1)];
+
+  try {
+      $db = \Db::dbc();
+
+      if($date_sorted = 'ASC' || $date_sorted = 'DESC'){
+        $sql = "SELECT * FROM `TWEET` ORDER BY DATE_PUBLI :date_sorted";
+        $sth = $db->prepare($sql);
+        $sth->execute(array(':date_sorted' => $date_sorted));
+      }
+
+      else
+      {
+        $sql = "SELECT * FROM `TWEET` ORDER BY DATE_PUBLI";
+        $sth = $db->query($sql);
+      }
+  } catch (\PDOException $e) {
+      print $e->getMessage();
+      return NULL;
+    }
+
+/* --- BROUILLON ---
+        $result = $sth->fetch(PDO::FETCH_NUM);
+        return get($result[0]);
+
+        SELECT * FROM `TWEET` ORDER BY DATE_PUBLI ASC
+        return [get(1),get(1),get(1),get(1),get(1),get(1)];4
+*/
 }
 
 /**
