@@ -234,6 +234,7 @@ function destroy($id) {
         print $e->getMessage();
         return false;
     }
+
         return true;
 }
 
@@ -255,6 +256,7 @@ function search($string) {
         print $e->getMessage();
         return NULL;
       }
+
         return get($result[0]);
 }
 
@@ -267,31 +269,34 @@ function search($string) {
 function list_all($date_sorted=false) {
 
   try {
+      $i = 0;
       $db = \Db::dbc();
 
-      if($date_sorted = 'ASC' || $date_sorted = 'DESC'){
-        $sql = "SELECT * FROM `TWEET` ORDER BY DATE_PUBLI :date_sorted";
+      if($date_sorted == 'ASC' || $date_sorted == 'DESC'){
+        $sql = "SELECT `ID_TWEET` FROM `TWEET` ORDER BY DATE_PUBLI :date_sorted";
         $sth = $db->prepare($sql);
         $sth->execute(array(':date_sorted' => $date_sorted));
       }
 
-      else
+      elseif($date_sorted == 'false')
       {
-        $sql = "SELECT * FROM `TWEET` ORDER BY DATE_PUBLI";
+        $sql = "SELECT `ID_TWEET` FROM `TWEET`";
         $sth = $db->query($sql);
       }
+
   } catch (\PDOException $e) {
       print $e->getMessage();
       return NULL;
     }
 
-/* --- BROUILLON ---
-        $result = $sth->fetch(PDO::FETCH_NUM);
-        return get($result[0]);
+        $arrayObj[] = (object) array();
 
-        SELECT * FROM `TWEET` ORDER BY DATE_PUBLI ASC
-        return [get(1),get(1),get(1),get(1),get(1),get(1)];4
-*/
+        while($result = $sth->fetch(PDO::FETCH_NUM)) {
+          $arrayObj[$i] = get($result[0]);
+          $i++;
+        }
+
+        return $arrayObj;
 }
 
 /**
