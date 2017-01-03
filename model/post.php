@@ -307,11 +307,12 @@ function list_all($date_sorted=false) {
  */
 function list_user_posts($id, $date_sorted="DESC") {
 
-  $i = 0;
-  $db = \Db::dbc();
-  $sql = "SELECT `ID_TWEET` FROM `TWEET` WHERE `ID_USER` = :id ORDER BY DATE_PUBLI :date_sorted";
-  $sth = $db->prepare($sql);
-  $sth->execute(array(':id' => $id, ':date_sorted' => $date_sorted));
+  try {
+    $i = 0;
+    $db = \Db::dbc();
+    $sql = "SELECT `ID_TWEET` FROM `TWEET` WHERE `ID_USER` = :id ORDER BY DATE_PUBLI :date_sorted";
+    $sth = $db->prepare($sql);
+    $sth->execute(array(':id' => $id, ':date_sorted' => $date_sorted));
 
   } catch (\PDOException $e) {
   print $e->getMessage();
@@ -378,5 +379,27 @@ function like($uid, $pid) {
  * @return true if the post has been unliked, false else
  */
 function unlike($uid, $pid) {
-    return false;
+
+  try {
+    $db = \Db::dbc();
+
+    $sql = "SELECT * FROM `AIMER` WHERE `ID_TWEET` = :pid AND `ID_USER` = :uid";
+    $sth = $db->prepare($sql);
+    $sth->execute(array(':pid' => $pid, ':uid' => $uid));
+
+    if(mysql_num_rows($sth) == 0)
+    {
+        return true;
+    }
+
+    $sql = "DELETE FROM `AIMER` WHERE `AIMER`.`ID_TWEET` = :pid AND `AIMER`.`ID_USER` = :uid";
+    $sth = $db->prepare($sql);
+    $sth->execute(array(':pid' => $pid, ':uid' => $uid));
+
+  } catch (\PDOException $e) {
+  print $e->getMessage();
+  return false;
+  }
+
+    return true;
 }
