@@ -23,7 +23,7 @@ function get($id) {
 
         $sth = $db->prepare("SELECT `ID_USER`, `CONTENT`, `DATE_PUBLI` FROM `TWEET` WHERE `ID_TWEET` = :id");
         $sth->execute(array(':id' => $id));
-        
+
         if ($array = $sth->fetch())
         {
             $obj = (object) array();
@@ -31,7 +31,7 @@ function get($id) {
             $obj->text = $array[1];
             $obj->date = new \DateTime($array[2]);
             $obj->author = \Model\User\get($array[0]);
-            
+
             return $obj;
         }
         else
@@ -396,10 +396,24 @@ function get_responses($pid) {
  * Get stats from a post (number of responses and number of likes
  */
 function get_stats($pid) {
-    return (object) array(
-        "nb_likes" => 10,
-        "nb_responses" => 40
-    );
+
+    try {
+      $db = \Db::dbc();
+
+      $nb_likes = get_likes($pid);
+      $nb_Resp = get_responses($pid);
+
+      $obj = (object) array();
+
+      $obj->nb_likes = $nb_likes->count();
+      $obj->nb_Resp = $nb_Resp->count();
+
+    } catch (\PDOException $e) {
+      print $e->getMessage();
+      return NULL;
+    }
+
+    return $obj;
 }
 
 /**
