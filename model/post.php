@@ -416,12 +416,12 @@ function get_stats($pid) {
       $obj->nb_likes = $nb_likes->count();
       $obj->nb_Resp = $nb_Resp->count();
 
+      return $obj;
+
     } catch (\PDOException $e) {
       print $e->getMessage();
       return NULL;
     }
-
-    return $obj;
 }
 
 /**
