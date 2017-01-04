@@ -229,10 +229,14 @@ function destroy($id) {
 
     try {
         $db = \Db::dbc();
-        $sql = "DELETE FROM `TWEET` WHERE `ID_TWEET_REPONSE` = :id";
+        $sql = "UPDATE `TWEET` SET `ID_TWEET_REPONSE`= NULL WHERE `ID_TWEET_REPONSE` = :id";
         $sth = $db->prepare($sql);
         $sth->execute(array(':id' => $id));
 
+        $sql = "DELETE FROM `TWEET` WHERE `ID_TWEET` = :id";
+        $sth = $db->prepare($sql);
+        $sth->execute(array(':id' => $id));
+        
     } catch (\PDOException $e) {
         print $e->getMessage();
         return false;
@@ -271,34 +275,34 @@ function search($string) {
 function list_all($date_sorted=false) {
 
   try {
-      $i = 0;
-      $db = \Db::dbc();
+    $i = 0;
+    $db = \Db::dbc();
 
-      if($date_sorted == 'ASC' || $date_sorted == 'DESC'){
+    if($date_sorted == 'ASC' || $date_sorted == 'DESC'){
         $sql = "SELECT `ID_TWEET` FROM `TWEET` ORDER BY DATE_PUBLI :date_sorted";
         $sth = $db->prepare($sql);
         $sth->execute(array(':date_sorted' => $date_sorted));
       }
 
-      elseif($date_sorted == 'false')
-      {
+    elseif($date_sorted == 'false')
+    {
         $sql = "SELECT `ID_TWEET` FROM `TWEET`";
         $sth = $db->query($sql);
-      }
+    }
+
+    $arrayObj[] = (object) array();
+
+    while($result = $sth->fetch()) {
+        $arrayObj[$i] = get($result[0]);
+        $i++;
+    }
+
+    return $arrayObj;
 
   } catch (\PDOException $e) {
       print $e->getMessage();
       return NULL;
     }
-
-        $arrayObj[] = (object) array();
-
-        while($result = $sth->fetch()) {
-          $arrayObj[$i] = get($result[0]);
-          $i++;
-        }
-
-        return $arrayObj;
 }
 
 /**
