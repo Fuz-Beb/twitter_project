@@ -141,21 +141,15 @@ function create($author_id, $text, $response_to=null) {
  */
 function extract_hashtags($text) {
 
-    function filter($c) {
-        return $c !== "" || $c[0] == "#";
-    }
-
-    $i = 0;
-    $newArray = array_filter($text, "filter" );
-    $hashtags[] = (object) array();
-
-    while($array = $newArray->fetch()) {
-        $hashtags[$i]->id = $array[0];
-        $hashtags[$i]->name = $array[1];
-        $i++;
-    }
-
-    return $hashtags;
+    return array_map(
+        function($el) { return substr($el, 1); },
+        array_filter(
+            explode(" ", $text),
+            function($c) {
+                return $c !== "" && $c[0] == "#";
+            }
+        )
+    );
 }
 
 /**
@@ -165,21 +159,15 @@ function extract_hashtags($text) {
  */
 function extract_mentions($text) {
 
-    function filter($c) {
-        return $c !== "" || $c[0] == "@";
-    }
-
-    $i = 0;
-    $newArray = array_filter($text, "filter" );
-    $mentioned[] = (object) array();
-
-    while($array = $newArray->fetch(PDO::FETCH_NUM)) {
-        $mentioned[$i]->id = $array[0];
-        $mentioned[$i]->name = $array[1];
-        $i++;
-    }
-
-    return $mentioned;
+    return array_map(
+        function($el) { return substr($el, 1); },
+        array_filter(
+            explode(" ", $text),
+            function($c) {
+                return $c !== "" && $c[0] == "@";
+            }
+        )
+    );
 }
 
 /**

@@ -34,27 +34,31 @@ class HashtagTest extends TestCase
     public function testAttach()
     {
         $this->assertTrue(Hashtag\attach(self::$pids[0], "hashtag0"));
-        $this->assertTrue(in_array("hashtag0", Hashtag\list_hashtags()));
-    }
-
-    public function testListHashtags()
-    {
         $l = Hashtag\list_hashtags();
-        $this->assertTrue(in_array("hashtag0", $l));
-        $this->assertTrue(in_array("hashtag1", $l));
-        $this->assertTrue(in_array("hashtag2", $l));
-        $this->assertTrue(in_array("hashtag3", $l));
+        $this->assertContains("hashtag0", $l);
+        $this->assertContains("hashtag1", $l);
+        $this->assertContains("hashtag2", $l);
+        $this->assertContains("hashtag3", $l);
+        $this->assertContains("hash", $l);
+        $this->assertContains("tag", $l);
+        $this->assertContains("hashtag3", $l);
     }
 
+    /**
+     * @depends testAttach
+     */  
     public function testListPopularHashtags()
     {
         $l = Hashtag\list_popular_hashtags(5);
         $this->assertEquals($l[0], "hashtag3");
-        $this->assertEquals($l[0], "hashtag2");
-        $this->assertEquals($l[0], "hashtag1");
-        $this->assertEquals($l[0], "hashtag0");
+        $this->assertEquals($l[1], "hashtag2");
+        $this->assertEquals($l[2], "hashtag1");
+        $this->assertEquals($l[3], "hashtag0");
     }
 
+    /**
+     * @depends testListPopularHashtags
+     */  
     public function testGetPosts()
     {
         $p = Hashtag\get_posts("hashtag0");
@@ -62,6 +66,9 @@ class HashtagTest extends TestCase
         $this->assertEquals($p[0]->id, self::$pids[0]);
     }
 
+    /**
+     * @depends testGetPosts
+     */  
     public function testGetRelatedHashtags()
     {
         $h = Hashtag\get_related_hashtags("hash", 5);
