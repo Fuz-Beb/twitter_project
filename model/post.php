@@ -21,17 +21,21 @@ function get($id) {
     try {
         $db = \Db::dbc();
 
-        $sth = $db->prepare("SELECT `CONTENT`, `DATE_PUBLI` FROM `TWEET` WHERE `ID_TWEET` = :id");
+        $sth = $db->prepare("SELECT `ID_USER`, `CONTENT`, `DATE_PUBLI` FROM `TWEET` WHERE `ID_TWEET` = :id");
         $sth->execute(array(':id' => $id));
-        $array = $sth->fetch(PDO::FETCH_NUM);
-
-        $obj = (object) array();
-        $obj->id = $id;
-        $obj->text = $array[0];
-        $obj->text = new \DateTime($array[1]);
-        $obj->author = \Model\User\get($id);
-
-        return $obj;
+        
+        if ($array = $sth->fetch())
+        {
+            $obj = (object) array();
+            $obj->id = $id;
+            $obj->text = $array[1];
+            $obj->date = new \DateTime($array[2]);
+            $obj->author = \Model\User\get($array[0]);
+            
+            return $obj;
+        }
+        else
+            return NULL;
 
     } catch (\PDOException $e) {
         print $e->getMessage();
@@ -56,12 +60,12 @@ function get_with_joins($id) {
 
         /* Récupération des 4 premiers attribut */
         $obj = get($id);
-        $sth = $db->prepare("SELECT `IDUSER` FROM `AIMER` WHERE `IDTWEET` = :id");
+        $sth = $db->prepare("SELECT `ID_USER` FROM `AIMER` WHERE `ID_TWEET` = :id");
         $sth->execute(array(':id' => $id));
 
         /* Récupération des objects des personnes qui ont like le post */
         $likes[] = (object) array();
-        while($result = $sth->fetch(PDO::FETCH_NUM)) {
+        while($result = $sth->fetch()) {
             $likes[$i] = \Model\User\get($result[0]);
             $i++;
         }
@@ -70,10 +74,10 @@ function get_with_joins($id) {
         $obj->hashtags = extract_hashtags($obj->text);
 
         /* Récupération de l'object du tweet si c'est une réponse */
-        $sth = $db->prepare("SELECT `IDTWEET_REPONSE` FROM `TWEET` WHERE `IDTWEET` = :id");
+        $sth = $db->prepare("SELECT `ID_TWEET_REPONSE` FROM `TWEET` WHERE `ID_TWEET` = :id");
         $sth->execute(array(':id' => $id));
 
-        $respond = $sth->fetch(PDO::FETCH_NUM);
+        $respond = $sth->fetch();
 
         if ($respond == false)
             $obj->responds_to = NULL;
@@ -106,12 +110,23 @@ function create($author_id, $text, $response_to=null) {
 
         /* Calcul de la date */
         $date = new DateTime('NOW');
-        $date->format('Y-m-dTH:i:sP');
+        $newDate = $date->format('Y-m-dTH:i:sP');
 
         $db = \Db::dbc();
 
-        $sql = "INSERT INTO `TWEET` (`IDTWEET`, `IDUSER`, `IDTWEET_REPONSE`, `CONTENU`, `DATEPUBLI`) VALUES (NULL, '$author_id', '$response_to', '$text', '$date')";
+        if ($response_to == NULL)
+            $sql = "INSERT INTO `TWEET` (`ID_TWEET`, `ID_USER`, `ID_TWEET_REPONSE`, `CONTENT`, `DATE_PUBLI`) VALUES (NULL, '$author_id', NULL, '$text', '$newDate')";
+        else
+            $sql = "INSERT INTO `TWEET` (`ID_TWEET`, `ID_USER`, `ID_TWEET_REPONSE`, `CONTENT`, `DATE_PUBLI`) VALUES (NULL, '$author_id', '$response_to', '$text', '$newDate')";
+
         $db->query($sql);
+
+        $sql = "SELECT `ID_TWEET` FROM `TWEET` WHERE `ID_USER` = :id AND `DATE_PUBLI` LIKE :datePubli";
+        $sth = $db->prepare($sql);
+        $sth->execute(array(':id' => $author_id, ':datePubli' => $newDate));
+        $result = $sth->fetch();
+
+        return $result[0];
 
     } catch (\PDOException $e) {
         print $e->getMessage();
@@ -134,7 +149,7 @@ function extract_hashtags($text) {
     $newArray = array_filter($text, "filter" );
     $hashtags[] = (object) array();
 
-    while($array = $newArray->fetch(PDO::FETCH_NUM)) {
+    while($array = $newArray->fetch()) {
         $hashtags[$i]->id = $array[0];
         $hashtags[$i]->name = $array[1];
         $i++;

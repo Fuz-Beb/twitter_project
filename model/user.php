@@ -40,6 +40,7 @@ function get($id) {
 
     } catch (\PDOException $e) {
         print $e->getMessage();
+        return NULL;
     }
 }
 
@@ -178,7 +179,7 @@ function destroy($id) {
  * @return the hashed password
  */
 function hash_password($password) {
-    return password_hash($password, PASSWORD_DEFAULT);
+    return md5($password);
 }
 
 /**
@@ -395,7 +396,7 @@ function check_auth($username, $password) {
     $result = $sth->fetch(PDO::FETCH_NUM);
 
     /* Vérification du password */
-    if(password_verify($password, $result[1]))
+    if(md5($password, $result[1]))
         return get($result[0]);
     else
         return NULL;
@@ -424,7 +425,7 @@ function check_auth_id($id, $password) {
     $result = $sth->fetch(PDO::FETCH_NUM);
 
     /* Vérification du password */
-    if(strcmp($password, $result[0]))
+    if($password == $result[0])
         return get($id);
     else
         return NULL;
