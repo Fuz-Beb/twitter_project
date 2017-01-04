@@ -415,13 +415,6 @@ function get_stats($pid) {
     }
 
     return $obj;
-  };
-
-
-    /*return (object) array(
-        "nb_likes" => 10,
-        "nb_responses" => 40
-    );*/
 }
 
 /**
