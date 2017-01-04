@@ -181,7 +181,7 @@ function mention_user($pid, $uid) {
     try {
         $db = \Db::dbc();
 
-        $sql = "INSERT INTO `MENTIONNER` (`IDTWEET`, `IDUSER`, `NOTIF`) VALUES ('$pid', '$uid', '1')";
+        $sql = "INSERT INTO `MENTIONNER` (`ID_TWEET`, `ID_USER`, `NOTIF`) VALUES ('$pid', '$uid', '1')";
         $db->query($sql);
 
     } catch (\PDOException $e) {
@@ -202,7 +202,7 @@ function get_mentioned($pid) {
     try {
         $i = 0;
         $db = \Db::dbc();
-        $sth = $db->prepare("SELECT `IDUSER` FROM `MENTIONNER` WHERE `IDTWEET` = :pid");
+        $sth = $db->prepare("SELECT `ID_USER` FROM `MENTIONNER` WHERE `ID_TWEET` = :pid");
         $sth->execute(array(':pid' => $pid));
 
         $arrayObj[] = (object) array();
@@ -253,17 +253,42 @@ function search($string) {
 
     try {
         $db = \Db::dbc();
-        $sql = "SELECT ID_TWEET FROM TWEET WHERE CONTENT = :string";
+        $i = 0;
+        $sql = "SELECT `ID_TWEET` FROM `TWEET` WHERE `CONTENT` LIKE :string";
         $sth = $db->prepare($sql);
         $sth->execute(array(':string' => $string));
-        $result = $sth->fetch();
+
+        if ($result = $sth->fetch()) {
+            $arrayObj[] = (object) array();
+            $arrayObj[0] = get($result[0]);
+            $i++; 
+
+            while($result = $sth->fetch()) {
+                    $arrayObj[$i] = get($result[0]);
+                    $i++;                
+            }
+        }
+        else
+        {
+            $sql = "SELECT `ID_TWEET`, INSTR( `CONTENT`, '$string' ) FROM `TWEET`";
+            $sth = $db->query($sql);
+
+            $arrayObj[] = (object) array();
+
+            while($result = $sth->fetch()) {
+                if ($result[1] != 0)
+                {
+                    $arrayObj[$i] = get($result[0]);
+                    $i++;
+                }
+            }
+        }
+        return $arrayObj;
 
     } catch (\PDOException $e) {
         print $e->getMessage();
         return NULL;
-      }
-
-        return get($result[0]);
+    }
 }
 
 /**

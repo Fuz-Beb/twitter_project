@@ -196,13 +196,13 @@ function search($string) {
         $sth = $db->prepare($sql);
         $sth->execute(array(':string' => $string));
 
-        if ($result = $sth->fetch(PDO::FETCH_NUM)) {
+        if ($result = $sth->fetch()) {
 
             $arrayObj[] = (object) array();
             $arrayObj[0] = get($result[0]);
             $i++; 
 
-            while($result = $sth->fetch(PDO::FETCH_NUM)) {
+            while($result = $sth->fetch()) {
                     $arrayObj[$i] = get($result[0]);
                     $i++;                
             }
@@ -214,8 +214,8 @@ function search($string) {
 
             $arrayObj[] = (object) array();
 
-            while($result = $sth->fetch(PDO::FETCH_NUM)) {
-                if ($result[1] !== 0 || $result[1] !== 0)
+            while($result = $sth->fetch()) {
+                if ($result[1] !== 0 || $result[2] !== 0)
                 {
                     $arrayObj[$i] = get($result[0]);
                     $i++;                
