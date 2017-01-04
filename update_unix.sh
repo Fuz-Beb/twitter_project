@@ -1,11 +1,19 @@
 #!/bin/bash -e
 files=(autoload.php composer.json composer-setup.php controller instructions lib README.md tests update_unix.sh update_win.bat scripts view www)
 
+download() {
+if hash wget 2>/dev/null; then
+    wget -O "$2" "$1"
+else
+    curl -L "$1" -o "$2"
+fi
+}
+
 if [ $# -eq 0 ]; then
     echo "Downloading master.zip"
     echo "----------------------"
     echo ""
-    wget -O master.tar.gz http://github.com/prafiny/db-project/archive/master.tar.gz
+    download http://github.com/prafiny/db-project/archive/master.tar.gz master.tar.gz
     tar xvf master.tar.gz
     rm master.tar.gz
     for i in "${files[@]}"

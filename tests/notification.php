@@ -28,8 +28,8 @@ class NotificationTest extends TestCase
         );
         self::$pids = [];
         
-        self::$pids[] = Post\create($uids[0], "this is a searchid1 test");
-        self::$pids[] = Post\create($uids[1], "this searchid2 is a test");
+        self::$pids[] = Post\create(self::$uids[0], "this is a searchid1 test");
+        self::$pids[] = Post\create(self::$uids[1], "this searchid2 is a test");
     }
 
     public function testLikedNotification()
@@ -44,7 +44,7 @@ class NotificationTest extends TestCase
         $this->assertObjectHasAttribute('reading_date', $n[0]);
 
         $this->assertEquals($n[0]->reading_date, null);
-        $this->assertTrue(Notification\like_notification_seen(self::$pids[1], self::$uids[0]));
+        $this->assertTrue(Notification\liked_notification_seen(self::$pids[1], self::$uids[0]));
         $n = Notification\get_liked_notifications(self::$uids[1]);
         $this->assertNotEquals($n[0]->reading_date, null);
         

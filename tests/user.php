@@ -129,6 +129,7 @@ class UserTest extends TestCase
     {
         foreach($users as $u) {
             $r = User\search($u->name);
+
             $this->assertEquals(1, count($r), "search should search users with name");
             $this->assertEquals($r[0], $u);
         }
@@ -140,6 +141,7 @@ class UserTest extends TestCase
         }
 
         $r = User\search("user");
+
         $this->assertEquals(2, count($r), "search should do substring comparisons");
         
         return $users;
