@@ -278,13 +278,17 @@ function list_all($date_sorted=false) {
     $i = 0;
     $db = \Db::dbc();
 
-    if($date_sorted == 'ASC' || $date_sorted == 'DESC'){
-        $sql = "SELECT `ID_TWEET` FROM `TWEET` ORDER BY DATE_PUBLI :date_sorted";
-        $sth = $db->prepare($sql);
-        $sth->execute(array(':date_sorted' => $date_sorted));
-      }
-
-    elseif($date_sorted == 'false')
+    if($date_sorted == "ASC")
+    {
+        $sql = "SELECT `ID_TWEET` FROM `TWEET` ORDER BY `DATE_PUBLI` ASC";
+        $sth = $db->query($sql);
+    }
+    elseif ($date_sorted == "DESC")
+    {
+        $sql = "SELECT `ID_TWEET` FROM `TWEET` ORDER BY `DATE_PUBLI` DESC";
+        $sth = $db->query($sql);
+    }
+    elseif($date_sorted == false || $date_sorted == FALSE)
     {
         $sql = "SELECT `ID_TWEET` FROM `TWEET`";
         $sth = $db->query($sql);
