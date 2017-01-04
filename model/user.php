@@ -372,6 +372,8 @@ function get_stats($uid) {
     $obj->nb_followers = $nb_followers->count();
     $obj->nb_following = $nb_following->count();
 
+    return $obj;
+
   } catch (\PDOException $e) {
     print $e->getMessage();
     return NULL;

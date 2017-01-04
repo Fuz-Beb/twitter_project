@@ -79,10 +79,10 @@ function get_with_joins($id) {
 
         $respond = $sth->fetch();
 
-        if ($respond == false)
+        if ($respond[0] == false || $respond[0] == FALSE || $respond[0] == null || $respond[0] == NULL)
             $obj->responds_to = NULL;
         else
-            $obj->responds_to = get($respond);
+            $obj->responds_to = get($respond[0]);
 
         return $obj;
 
@@ -207,7 +207,7 @@ function get_mentioned($pid) {
 
         $arrayObj[] = (object) array();
 
-        while($result = $sth->fetch(PDO::FETCH_NUM)) {
+        while($result = $sth->fetch()) {
             $arrayObj[$i] = get($result[0]);
             $i++;
         }
@@ -229,7 +229,7 @@ function destroy($id) {
 
     try {
         $db = \Db::dbc();
-        $sql = "DELETE FROM `MENTIONNER` WHERE `IDTWEET` = :id";
+        $sql = "DELETE FROM `TWEET` WHERE `ID_TWEET_REPONSE` = :id";
         $sth = $db->prepare($sql);
         $sth->execute(array(':id' => $id));
 
@@ -237,7 +237,6 @@ function destroy($id) {
         print $e->getMessage();
         return false;
     }
-
         return true;
 }
 
@@ -253,7 +252,7 @@ function search($string) {
         $sql = "SELECT ID_TWEET FROM TWEET WHERE CONTENT = :string";
         $sth = $db->prepare($sql);
         $sth->execute(array(':string' => $string));
-        $result = $sth->fetch(PDO::FETCH_NUM);
+        $result = $sth->fetch();
 
     } catch (\PDOException $e) {
         print $e->getMessage();
@@ -294,7 +293,7 @@ function list_all($date_sorted=false) {
 
         $arrayObj[] = (object) array();
 
-        while($result = $sth->fetch(PDO::FETCH_NUM)) {
+        while($result = $sth->fetch()) {
           $arrayObj[$i] = get($result[0]);
           $i++;
         }
@@ -324,7 +323,7 @@ function list_user_posts($id, $date_sorted="DESC") {
 
   $arrayObj[] = (object) array();
 
-    while($result = $sth->fetch(PDO::FETCH_NUM)) {
+    while($result = $sth->fetch()) {
       $arrayObj[$i] = get($result[0]);
       $i++;
     }
@@ -352,7 +351,7 @@ function get_likes($pid) {
 
       $arrayObj[] = (object) array();
 
-      while($result = $sth->fetch(PDO::FETCH_NUM)) {
+      while($result = $sth->fetch()) {
           $arrayObj[$i] = get($result[0]);
           $i++;
       }
@@ -375,12 +374,12 @@ function get_responses($pid) {
   try {
       $i = 0;
       $db = \Db::dbc();
-      $sth = $db->prepare("SELECT `ID_TWEET` FROM `TWEET` WHERE `ID_TWEET` = :pid");
+      $sth = $db->prepare("SELECT `ID_TWEET` FROM `TWEET` WHERE `ID_TWEET_REPONSE` = :pid");
       $sth->execute(array(':pid' => $pid));
 
       $arrayObj[] = (object) array();
 
-      while($result = $sth->fetch(PDO::FETCH_NUM)) {
+      while($result = $sth->fetch()) {
           $arrayObj[$i] = get($result[0]);
           $i++;
       }
