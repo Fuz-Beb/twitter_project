@@ -355,7 +355,26 @@ function list_user_posts($id, $date_sorted="DESC") {
  * @return the users objects who liked the post
  */
 function get_likes($pid) {
-    return [\Model\User\get(2)];
+
+  try {
+      $i = 0;
+      $db = \Db::dbc();
+      $sth = $db->prepare("SELECT `ID_USER` FROM `AIMER` WHERE `ID_TWEET` = :pid");
+      $sth->execute(array(':pid' => $pid));
+
+      $arrayObj[] = (object) array();
+
+      while($result = $sth->fetch(PDO::FETCH_NUM)) {
+          $arrayObj[$i] = get($result[0]);
+          $i++;
+      }
+
+  } catch (\PDOException $e) {
+      print $e->getMessage();
+      return NULL;
+  }
+
+  return $arrayObj;
 }
 
 /**
@@ -364,7 +383,26 @@ function get_likes($pid) {
  * @return the posts objects which are a response to the actual post
  */
 function get_responses($pid) {
-    return [get(2)];
+
+  try {
+      $i = 0;
+      $db = \Db::dbc();
+      $sth = $db->prepare("SELECT `ID_TWEET` FROM `TWEET` WHERE `ID_TWEET` = :pid");
+      $sth->execute(array(':pid' => $pid));
+
+      $arrayObj[] = (object) array();
+
+      while($result = $sth->fetch(PDO::FETCH_NUM)) {
+          $arrayObj[$i] = get($result[0]);
+          $i++;
+      }
+
+  } catch (\PDOException $e) {
+      print $e->getMessage();
+      return NULL;
+  }
+
+  return $arrayObj;
 }
 
 /**
@@ -384,7 +422,29 @@ function get_stats($pid) {
  * @return true if the post has been liked, false else
  */
 function like($uid, $pid) {
-    return false;
+
+  try {
+    $db = \Db::dbc();
+
+    $sql = "SELECT * FROM `AIMER` WHERE `ID_TWEET` = :pid AND `ID_USER` = :uid";
+    $sth = $db->prepare($sql);
+    $sth->execute(array(':pid' => $pid, ':uid' => $uid));
+
+    if(mysql_num_rows($sth) >= 1)
+    {
+        return true;
+    }
+
+    $sql = "INSERT INTO `AIMER` (`ID_TWEET`, `ID_USER`, `NOTIF`) VALUES (:pid, :uid, '1');";
+    $sth = $db->prepare($sql);
+    $sth->execute(array(':pid' => $pid, ':uid' => $uid));
+
+  } catch (\PDOException $e) {
+  print $e->getMessage();
+  return false;
+  }
+
+    return true;
 }
 
 /**
