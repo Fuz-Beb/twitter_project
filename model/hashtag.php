@@ -15,7 +15,44 @@ use \PDOException;
  * @return true or false (if something went wrong)
  */
 function attach($pid, $hashtag_name) {
-    return false;
+
+  try {
+    $db = \Db::dbc();
+    $sql = "SELECT `ID_HASHTAGS` FROM `HASHTAGS` WHERE `NAME` LIKE ':hashtag_name'";
+    $sth = $db->prepare($sql);
+    $sth->execute(array(':hashtag_name' => $hashtag_name));
+
+    if($sth->rowCount() < 1) {
+        $sql = "INSERT INTO `HASHTAGS` (`ID_HASHTAGS`, `NAME`) VALUES ('0', ':hashtag_name');";
+        $sth = $db->prepare($sql);
+        $sth->execute(array(':hashtag_name' => $hashtag_name));
+
+        $sql = "SELECT `ID_HASHTAGS` FROM `HASHTAGS` WHERE `NAME` LIKE ':hashtag_name'";
+        $sth = $db->prepare($sql);
+        $sth->execute(array(':hashtag_name' => $hashtag_name));
+    }
+
+    $respond = $sth->fetch();
+    $sql = "SELECT `ID_TWEET` FROM `CONCERNER` WHERE `ID_HASHTAGS` LIKE ':respond'";
+    $sth = $db->prepare($sql);
+    $sth->execute(array(':respond' => $respond[0]));
+
+    if($sth->rowCount() < 1) {
+        $sql = "INSERT INTO `CONCERNER` (`ID_TWEET`, `ID_HASHTAGS`) VALUES (':pid', '0');";
+        $sth = $db->prepare($sql);
+        $sth->execute(array(':pid' => $pid));
+    }
+
+    else {
+      return false;
+    }
+
+  } catch (\PDOException $e) {
+  print $e->getMessage();
+  return false;
+  }
+
+    return true;
 }
 
 /**
