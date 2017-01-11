@@ -1,4 +1,5 @@
-#!/bin/bash -e
+#!/bin/bash
+set -e
 files=(autoload.php composer.json composer-setup.php controller instructions lib README.md tests update_unix.sh update_win.bat scripts view www)
 
 download() {

@@ -6,6 +6,7 @@ class UserTest extends TestCase
 {
     public function testCreate()
     {
+        \Db::flush();
         $uid = User\create(
             "user1",
             "User 1",
@@ -16,17 +17,17 @@ class UserTest extends TestCase
         $this->assertNotNull($uid, "create user should return the new user id");
         $user = User\get($uid);
         $this->assertNotNull($user, "get should return a user object");
-        $this->assertEquals($user->id, $uid, "user object id should be matching the one returned by create");
+        $this->assertEquals($uid, $user->id, "user object id should be matching the one returned by create");
         $this->assertObjectHasAttribute("id", $user, "User object should have an id attribute");
-        $this->assertEquals($user->username, "user1", "Username should be user1");
+        $this->assertEquals("user1", $user->username, "Username should be user1");
         $this->assertObjectHasAttribute("name", $user, "User object should have a username attribute");
-        $this->assertEquals($user->name, "User 1", "Name should be 'User 1' instead of '$user->name'");
+        $this->assertEquals("User 1", $user->name, "Name should be 'User 1' instead of '$user->name'");
         $this->assertObjectHasAttribute("email", $user, "User object should have an email attribute");
-        $this->assertEquals($user->email, "user1@mail.com", "Email should be 'user1@mail.com' instead of '$user->email'");
-        $this->assertEquals($user, User\check_auth($user->username, "password"), "check_auth not working");
-        $this->assertEquals($user, User\check_auth_id($uid, User\hash_password("password")), "check_auth_id not working");
+        $this->assertEquals("user1@mail.com", $user->email, "Email should be 'user1@mail.com' instead of '$user->email'");
+        $this->assertEquals(User\check_auth($user->username, "password"), $user, "check_auth not working");
+        $this->assertEquals(User\check_auth_id($uid, User\hash_password("password")), $user, "check_auth_id not working");
 
-        $this->assertNull(User\get(1000), "get should return null if no user were fould");
+        $this->assertNull(User\get(-1), "get should return null if no user were fould");
         return $uid;
     }
 
@@ -170,7 +171,6 @@ class UserTest extends TestCase
 
     public static function tearDownAfterClass()
     {
-        \Db::flush();
     }
 }
 ?>
