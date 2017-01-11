@@ -7,6 +7,7 @@ class PostTest extends TestCase
     protected static $users;
     public static function setUpBeforeClass()
     {
+        \Db::flush();
         User\create(
             "userpost1",
             "User 1",
@@ -112,6 +113,7 @@ class PostTest extends TestCase
         $pid = Post\create($uid, "@".self::$users[1]->username);
         $m = Post\get_mentioned($pid);
         $this->assertEquals(count($m), 1, "create should search for mentions");
+        /*print_r($m);*/
         $this->assertTrue(self::$users[1] == $m[0], "get_mentioned should return user objects");
     }
 
@@ -134,7 +136,6 @@ class PostTest extends TestCase
 
     public static function tearDownAfterClass()
     {
-        \Db::flush();
     }
 }
 ?>

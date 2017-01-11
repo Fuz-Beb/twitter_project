@@ -56,6 +56,7 @@ function get($id) {
 function get_with_joins($id) {
 
     try {
+        $i = 0;
         $db = \Db::dbc();
 
         /* Récupération des 4 premiers attribut */
@@ -65,6 +66,8 @@ function get_with_joins($id) {
 
         /* Récupération des objects des personnes qui ont like le post */
         $likes[] = (object) array();
+        $likes = [];
+
         while($result = $sth->fetch()) {
             $likes[$i] = \Model\User\get($result[0]);
             $i++;
@@ -126,6 +129,17 @@ function create($author_id, $text, $response_to=null) {
         $sth->execute(array(':id' => $author_id, ':datePubli' => $newDate));
         $result = $sth->fetch();
 
+        /* Recherche de mention utilisateur dans un texte */
+        $array = extract_mentions($text);
+
+        foreach($array as $value) {
+            $sql = "SELECT `ID_USER` FROM `UTILISATEUR` WHERE `USERNAME` LIKE :username";
+            $sth = $db->prepare($sql);
+            $sth->execute(array(':username' => $value));
+            $value = $sth->fetch();
+            mention_user($result[0], $value[0]);
+        }
+
         return $result[0];
 
     } catch (\PDOException $e) {
@@ -184,12 +198,12 @@ function mention_user($pid, $uid) {
         $sql = "INSERT INTO `MENTIONNER` (`ID_TWEET`, `ID_USER`, `NOTIF`) VALUES ('$pid', '$uid', '1')";
         $db->query($sql);
 
+        return true;
+
     } catch (\PDOException $e) {
         print $e->getMessage();
         return false;
     }
-
-    return true;
 }
 
 /**
@@ -208,16 +222,16 @@ function get_mentioned($pid) {
         $arrayObj[] = (object) array();
 
         while($result = $sth->fetch()) {
-            $arrayObj[$i] = get($result[0]);
+            $arrayObj[$i] = \Model\User\get($result[0]);
             $i++;
         }
+
+        return $arrayObj;
 
     } catch (\PDOException $e) {
         print $e->getMessage();
         return NULL;
     }
-
-    return $arrayObj;
 }
 
 /**
@@ -236,12 +250,13 @@ function destroy($id) {
         $sql = "DELETE FROM `TWEET` WHERE `ID_TWEET` = :id";
         $sth = $db->prepare($sql);
         $sth->execute(array(':id' => $id));
+
+        return true;
         
     } catch (\PDOException $e) {
         print $e->getMessage();
         return false;
     }
-        return true;
 }
 
 /**
@@ -299,38 +314,38 @@ function search($string) {
  */
 function list_all($date_sorted=false) {
 
-  try {
-    $i = 0;
-    $db = \Db::dbc();
+    try {
+        $i = 0;
+        $db = \Db::dbc();
 
-    if($date_sorted == "ASC")
-    {
-        $sql = "SELECT `ID_TWEET` FROM `TWEET` ORDER BY `DATE_PUBLI` ASC";
-        $sth = $db->query($sql);
-    }
-    elseif ($date_sorted == "DESC")
-    {
-        $sql = "SELECT `ID_TWEET` FROM `TWEET` ORDER BY `DATE_PUBLI` DESC";
-        $sth = $db->query($sql);
-    }
-    elseif($date_sorted == false || $date_sorted == FALSE)
-    {
-        $sql = "SELECT `ID_TWEET` FROM `TWEET`";
-        $sth = $db->query($sql);
-    }
+        if($date_sorted == "ASC")
+        {
+            $sql = "SELECT `ID_TWEET` FROM `TWEET` ORDER BY `DATE_PUBLI` ASC";
+            $sth = $db->query($sql);
+        }
+        elseif ($date_sorted == "DESC")
+        {
+            $sql = "SELECT `ID_TWEET` FROM `TWEET` ORDER BY `DATE_PUBLI` DESC";
+            $sth = $db->query($sql);
+        }
+        elseif($date_sorted == false || $date_sorted == FALSE)
+        {
+            $sql = "SELECT `ID_TWEET` FROM `TWEET`";
+            $sth = $db->query($sql);
+        }
 
-    $arrayObj[] = (object) array();
+        $arrayObj[] = (object) array();
 
-    while($result = $sth->fetch()) {
-        $arrayObj[$i] = get($result[0]);
-        $i++;
-    }
+        while($result = $sth->fetch()) {
+            $arrayObj[$i] = get($result[0]);
+            $i++;
+        }
 
-    return $arrayObj;
+        return $arrayObj;
 
-  } catch (\PDOException $e) {
-      print $e->getMessage();
-      return NULL;
+    } catch (\PDOException $e) {
+        print $e->getMessage();
+        return NULL;
     }
 }
 
@@ -342,31 +357,26 @@ function list_all($date_sorted=false) {
  */
 function list_user_posts($id, $date_sorted="DESC") {
 
-  try {
-    $i = 0;
-    $db = \Db::dbc();
-    $sql = "SELECT `ID_TWEET` FROM `TWEET` WHERE `ID_USER` = :id ORDER BY DATE_PUBLI :date_sorted";
-    $sth = $db->prepare($sql);
-    $sth->execute(array(':id' => $id, ':date_sorted' => $date_sorted));
+    try {
+        $i = 0;
+        $db = \Db::dbc();
+        $sql = "SELECT `ID_TWEET` FROM `TWEET` WHERE `ID_USER` = :id ORDER BY DATE_PUBLI :date_sorted";
+        $sth = $db->prepare($sql);
+        $sth->execute(array(':id' => $id, ':date_sorted' => $date_sorted));
 
-  } catch (\PDOException $e) {
-  print $e->getMessage();
-  return NULL;
-  }
+    } catch (\PDOException $e) {
+        print $e->getMessage();
+        return NULL;
+    }
 
-  $arrayObj[] = (object) array();
+    $arrayObj[] = (object) array();
 
     while($result = $sth->fetch()) {
-      $arrayObj[$i] = get($result[0]);
-      $i++;
+        $arrayObj[$i] = get($result[0]);
+        $i++;
     }
 
     return $arrayObj;
-
-/* Revoir car je n'utilise pas get()
-    return [get(1)];
-*/
-
 }
 
 /**
@@ -376,25 +386,25 @@ function list_user_posts($id, $date_sorted="DESC") {
  */
 function get_likes($pid) {
 
-  try {
-      $i = 0;
-      $db = \Db::dbc();
-      $sth = $db->prepare("SELECT `ID_USER` FROM `AIMER` WHERE `ID_TWEET` = :pid");
-      $sth->execute(array(':pid' => $pid));
+    try {
+        $i = 0;
+        $db = \Db::dbc();
+        $sth = $db->prepare("SELECT `ID_USER` FROM `AIMER` WHERE `ID_TWEET` = :pid");
+        $sth->execute(array(':pid' => $pid));
 
-      $arrayObj[] = (object) array();
+        $arrayObj[] = (object) array();
 
-      while($result = $sth->fetch()) {
-          $arrayObj[$i] = get($result[0]);
-          $i++;
-      }
+        while($result = $sth->fetch()) {
+            $arrayObj[$i] = get($result[0]);
+            $i++;
+        }
 
-  } catch (\PDOException $e) {
-      print $e->getMessage();
-      return NULL;
-  }
+    } catch (\PDOException $e) {
+        print $e->getMessage();
+        return NULL;
+    }
 
-  return $arrayObj;
+    return $arrayObj;
 }
 
 /**
@@ -417,12 +427,12 @@ function get_responses($pid) {
           $i++;
       }
 
+      return $arrayObj;
+
   } catch (\PDOException $e) {
       print $e->getMessage();
       return NULL;
   }
-
-  return $arrayObj;
 }
 
 /**
@@ -431,21 +441,21 @@ function get_responses($pid) {
 function get_stats($pid) {
 
     try {
-      $db = \Db::dbc();
+        $db = \Db::dbc();
 
-      $nb_likes = get_likes($pid);
-      $nb_Resp = get_responses($pid);
+        $nb_likes = get_likes($pid);
+        $nb_Resp = get_responses($pid);
 
-      $obj = (object) array();
+        $obj = (object) array();
 
-      $obj->nb_likes = $nb_likes->count();
-      $obj->nb_Resp = $nb_Resp->count();
+        $obj->nb_likes = $nb_likes->count();
+        $obj->nb_Resp = $nb_Resp->count();
 
-      return $obj;
+        return $obj;
 
     } catch (\PDOException $e) {
-      print $e->getMessage();
-      return NULL;
+        print $e->getMessage();
+        return NULL;
     }
 }
 
@@ -464,7 +474,7 @@ function like($uid, $pid) {
     $sth = $db->prepare($sql);
     $sth->execute(array(':pid' => $pid, ':uid' => $uid));
 
-    if(mysql_num_rows($sth) >= 1)
+    if($sth->rowCount() > 0)
     {
         return true;
     }
@@ -473,12 +483,12 @@ function like($uid, $pid) {
     $sth = $db->prepare($sql);
     $sth->execute(array(':pid' => $pid, ':uid' => $uid));
 
-  } catch (\PDOException $e) {
-  print $e->getMessage();
-  return false;
-  }
-
     return true;
+
+    } catch (\PDOException $e) {
+        print $e->getMessage();
+        return false;
+    }
 }
 
 /**
@@ -489,26 +499,26 @@ function like($uid, $pid) {
  */
 function unlike($uid, $pid) {
 
-  try {
-    $db = \Db::dbc();
+    try {
+        $db = \Db::dbc();
 
-    $sql = "SELECT * FROM `AIMER` WHERE `ID_TWEET` = :pid AND `ID_USER` = :uid";
-    $sth = $db->prepare($sql);
-    $sth->execute(array(':pid' => $pid, ':uid' => $uid));
+        $sql = "SELECT * FROM `AIMER` WHERE `ID_TWEET` = :pid AND `ID_USER` = :uid";
+        $sth = $db->prepare($sql);
+        $sth->execute(array(':pid' => $pid, ':uid' => $uid));
 
-    if(mysql_num_rows($sth) == 0)
-    {
+        if($sth->rowCount() == 0)
+        {
+            return true;
+        }
+
+        $sql = "DELETE FROM `AIMER` WHERE `ID_TWEET` = :pid AND `ID_USER` = :uid";
+        $sth = $db->prepare($sql);
+        $sth->execute(array(':pid' => $pid, ':uid' => $uid));
+
         return true;
+
+    } catch (\PDOException $e) {
+        print $e->getMessage();
+        return false;
     }
-
-    $sql = "DELETE FROM `AIMER` WHERE `AIMER`.`ID_TWEET` = :pid AND `AIMER`.`ID_USER` = :uid";
-    $sth = $db->prepare($sql);
-    $sth->execute(array(':pid' => $pid, ':uid' => $uid));
-
-  } catch (\PDOException $e) {
-  print $e->getMessage();
-  return false;
-  }
-
-    return true;
 }

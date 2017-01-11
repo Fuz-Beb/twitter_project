@@ -11,6 +11,7 @@ class HashtagTest extends TestCase
 
     public static function setUpBeforeClass()
     {
+        \Db::flush();
         self::$uid = User\create(
             "userpost1",
             "User 1",
@@ -23,7 +24,7 @@ class HashtagTest extends TestCase
         self::$pids[] = Post\create(self::$uid, "This is a sample text #hashtag1");               
         self::$pids[] = Post\create(self::$uid, "This is a sample text #hashtag2");               
         self::$pids[] = Post\create(self::$uid, "This is a sample text #hashtag2");               
-        self::$pids[] = Post\create(self::$uid, "This is a sample text #hashtag2");               
+        self::$pids[] = Post\create(self::$uid, "This is a sample text #hashtag2");
         self::$pids[] = Post\create(self::$uid, "This is a sample text #hashtag3");               
         self::$pids[] = Post\create(self::$uid, "This is a sample text #hashtag3");               
         self::$pids[] = Post\create(self::$uid, "This is a sample text #hashtag3");               
@@ -35,13 +36,13 @@ class HashtagTest extends TestCase
     {
         $this->assertTrue(Hashtag\attach(self::$pids[0], "hashtag0"));
         $l = Hashtag\list_hashtags();
-        $this->assertContains("hashtag0", $l);
-        $this->assertContains("hashtag1", $l);
-        $this->assertContains("hashtag2", $l);
-        $this->assertContains("hashtag3", $l);
-        $this->assertContains("hash", $l);
-        $this->assertContains("tag", $l);
-        $this->assertContains("hashtag3", $l);
+        $this->assertContains("hashtag0", $l, "list_hashtags should return every hashtags");
+        $this->assertContains("hashtag1", $l, "list_hashtags should return every hashtags");
+        $this->assertContains("hashtag2", $l, "list_hashtags should return every hashtags");
+        $this->assertContains("hashtag3", $l, "list_hashtags should return every hashtags");
+        $this->assertContains("hash", $l, "list_hashtags should return every hashtags");
+        $this->assertContains("tag", $l, "list_hashtags should return every hashtags");
+        $this->assertContains("hashtag3", $l, "list_hashtags should return every hashtags");
     }
 
     /**
@@ -50,10 +51,9 @@ class HashtagTest extends TestCase
     public function testListPopularHashtags()
     {
         $l = Hashtag\list_popular_hashtags(5);
-        $this->assertEquals($l[0], "hashtag3");
-        $this->assertEquals($l[1], "hashtag2");
-        $this->assertEquals($l[2], "hashtag1");
-        $this->assertEquals($l[3], "hashtag0");
+        $this->assertEquals($l[0], "hashtag3", "list_popular_hashtags should return every hashtags sorted by popularity");
+        $this->assertEquals($l[1], "hashtag2", "list_popular_hashtags should return every hashtags sorted by popularity");
+        $this->assertEquals($l[2], "hashtag1", "list_popular_hashtags should return every hashtags sorted by popularity");
     }
 
     /**
@@ -62,8 +62,8 @@ class HashtagTest extends TestCase
     public function testGetPosts()
     {
         $p = Hashtag\get_posts("hashtag0");
-        $this->assertEquals(count($p), 1);
-        $this->assertEquals($p[0]->id, self::$pids[0]);
+        $this->assertEquals(1, count($p), "get_posts should return an array of the posts (in object form) that have a given hashtag");
+        $this->assertEquals(self::$pids[0], $p[0]->id, "get_posts should return the right posts");
     }
 
     /**
@@ -72,13 +72,12 @@ class HashtagTest extends TestCase
     public function testGetRelatedHashtags()
     {
         $h = Hashtag\get_related_hashtags("hash", 5);
-        $this->assertEquals(count($h), 1);
-        $this->assertEquals($h[0], "tag");
+        $this->assertEquals(1, count($h), "get_related_hashtags should return an array of every related hashtags names");
+        $this->assertEquals($h[0], "tag", "get_related_hashtags should return an array of every related hashtags names");
     }
 
     public static function tearDownAfterClass()
     {
-        \Db::flush();
     }
 }
 ?>

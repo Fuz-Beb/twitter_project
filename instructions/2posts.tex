@@ -91,7 +91,7 @@ To fulfill this work, you will need the following elements:
 
 \begin{itemize}
 \item A working environment with db connection to both app and test databases (see \texttt{0setup.pdf}).
-\item On the two databases, at least the tables modeling \textbf{user} and \textbf{followings}.
+\item On the two databases, at least the tables modeling user related tables and \textbf{posts}, \textbf{mentions} and \textbf{likes}.
 \end{itemize}
 
 \section{Work to do}
@@ -111,7 +111,7 @@ $db = \Db::dbc();
 $result = $db->query('SELECT * FROM post');
 \end{lstlisting}
 
-When you completed all the functions, you can check them by using the unit tests available. In a command line window )at the root of the project), type in the following command:
+When you completed all the functions, you can check them by using the unit tests available. In a command line window (at the root of the project), type in the following command:
 
 \begin{lstlisting}[language=bash]
 vendor\bin\phpunit --bootstrap autoload.php tests\post.php
@@ -121,7 +121,7 @@ vendor\bin\phpunit --bootstrap autoload.php tests\post.php
 
 \subsection{Presentation}
 
-The User entity represents a user and its properties:
+The Post entity represents a post and its properties:
 
 \begin{itemize}
 \item the date and time when it was published
@@ -202,12 +202,14 @@ Mentioning a user is useful to draw his/her attention. By including \texttt{@the
 \texttt{get\_mentioned} returns the list of the mentioned users in a given post.
 
 \subsection{\texttt{create(\$pid, \$uid)}}
-\texttt{create} must handle making the mention associations while creating a post. To help, the functions \texttt{extract\_mentions} (in \texttt{model/post.php}) is provided.
+Now that you coded the functions that takes care about mentions, you must use them in \texttt{create} so that mentions are added when creating a post.
+
+\texttt{create} must handle making the mention associations while creating a post. To help, the function \texttt{extract\_mentions} (in \texttt{model/post.php}) is provided.
 
 \section{Liking posts}
 
 \subsection{Presentation}
-A user can like (or fav) a post. This association has to be modeled accordingly
+A user can like (or fav, in a more twitterish language) a post. This association has to be modeled accordingly.
 
 \subsection{\texttt{like(\$uid, \$pid)}}
 \texttt{like} creates a like association. It must return a state boolean.

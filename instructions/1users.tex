@@ -175,7 +175,7 @@ This function returns a user matching the given username (same return format as 
 Tries to authenticate a username with a given password. Returns the user object (same return format as in \texttt{get(\$id)}) if everything went fine. Returns \texttt{null} else. \textit{This function \textbf{does} need to hash the password}
 
 \subsubsection{\texttt{check\_auth\_id(\$id, \$password)}}
-Tries to authenticate a user id with a given password. Returns the user object (same return format as in \texttt{get(\$id)}) if everything went fine. Returns \texttt{null} else. \textit{This function \textbf{doesn't} need to hash the password}
+Tries to authenticate a user id with a given password. Returns the user object (same return format as in \texttt{get(\$id)}) if everything went fine. Returns \texttt{null} else. \textit{This function \textbf{doesn't} need to hash the password}, because \texttt{\$password} is already given in its hashed form.
 
 \subsection{User modification and deletion}
 After the user objects being created, its attributes can be modified. The following functions are in charge of this and should be coded before running the unit tests.
