@@ -38,21 +38,22 @@ function attach($pid, $hashtag_name) {
     $sth->execute(array(':respond' => $respond[0]));
 
     if($sth->rowCount() < 1) {
-        $sql = "INSERT INTO `CONCERNER` (`ID_TWEET`, `ID_HASHTAGS`) VALUES (':pid', '0');";
+        $sql = "INSERT INTO `CONCERNER` (`ID_TWEET`, `ID_HASHTAGS`) VALUES (:pid, :respond);";
         $sth = $db->prepare($sql);
-        $sth->execute(array(':pid' => $pid));
+        $sth->execute(array(':pid' => $pid, ':respond' => $respond[0]));
     }
 
     else {
       return false;
     }
 
+    return true;
+
   } catch (\PDOException $e) {
   print $e->getMessage();
   return false;
   }
 
-    return true;
 }
 
 /**
@@ -60,7 +61,22 @@ function attach($pid, $hashtag_name) {
  * @return a list of hashtags names
  */
 function list_hashtags() {
-    return ["Test"];
+
+  try {
+    $db = \Db::dbc();
+    $sql = "SELECT NAME FROM `HASHTAGS`";
+    $sth = $db->prepare($sql);
+    $db->query($sql);
+
+    $result = $sth->fetch();
+
+    return $result[0];
+
+  } catch (\PDOException $e) {
+  print $e->getMessage();
+  return NULL;
+  }
+
 }
 
 /**
