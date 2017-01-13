@@ -23,7 +23,7 @@ function attach($pid, $hashtag_name) {
     $sth->execute(array(':hashtag_name' => $hashtag_name));
 
     if($sth->rowCount() < 1) {
-        $sql = "INSERT INTO `HASHTAGS` (`ID_HASHTAGS`, `NAME`) VALUES ('0', ':hashtag_name');";
+        $sql = "INSERT INTO `HASHTAGS` (`ID_HASHTAGS`, `NAME`) VALUES (NULL, ':hashtag_name');";
         $sth = $db->prepare($sql);
         $sth->execute(array(':hashtag_name' => $hashtag_name));
 
@@ -68,9 +68,9 @@ function list_hashtags() {
     $sth = $db->prepare($sql);
     $db->query($sql);
 
-    $result = $sth->fetch();
+    $result = $sth->fetchAll();
 
-    return $result[0];
+    return $result;
 
   } catch (\PDOException $e) {
   print $e->getMessage();
