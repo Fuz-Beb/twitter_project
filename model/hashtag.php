@@ -85,7 +85,21 @@ function list_hashtags() {
  * @return a list of hashtags
  */
 function list_popular_hashtags($length) {
-    return ["Hallo"];
+
+    try {
+      $db = \Db::dbc();
+      $sql="SELECT `ID_HASHTAGS` FROM CONCERNER GROUP BY ID_HASHTAGS ORDER BY COUNT(ID_TWEET) DESC LIMIT :length";
+      $sth = $db->prepare($sql);
+      $sth->execute(array(':length' => $length));
+
+      $result = $sth->fetchAll();
+
+      return $result;
+
+    } catch (\PDOException $e) {
+    print $e->getMessage();
+    return NULL;
+    }
 }
 
 /**
@@ -94,7 +108,34 @@ function list_popular_hashtags($length) {
  * @return a list of posts objects or null if the hashtag doesn't exist
  */
 function get_posts($hashtag_name) {
-    return [\Model\Post\get(1)];
+
+// Propable qu'elle ne fonctionne pas avec l'histoire des objets postObj
+
+  try {
+    $db = \Db::dbc();
+    $sql="SELECT `ID_TWEET` FROM `CONCERNER` INNER JOIN HASHTAGS ON CONCERNER.ID_HASHTAGS = HASHTAGS.ID_HASHTAGS AND HASHTAGS.NAME = :hashtag_name";
+    $sth = $db->prepare($sql);
+    $sth->execute(array(':hashtag_name' => $hashtag_name));
+
+    if($sth->rowCount() < 1)
+        return NULL;
+
+    /* Récupération des objects des posts du Hashtag choisi en param */
+    $postObj[] = (object) array();
+    $postObj = [];
+
+    while($result = $sth->fetch()) {
+        $postObj[$i] = get_with_joins($result);
+        $i++;
+    }
+
+    return $postObj;
+
+  } catch (\PDOException $e) {
+  print $e->getMessage();
+  return NULL;
+  }
+
 }
 
 /** Get related hashtags
@@ -103,5 +144,21 @@ function get_posts($hashtag_name) {
  * @return an array of hashtags names
  */
 function get_related_hashtags($hashtag_name, $length) {
-    return ["Hello"];
+
+  try {
+    $db = \Db::dbc();
+
+    $sql="SELECT DISTINCT CONCERNER.ID_HASHTAGS FROM `CONCERNER` INNER JOIN HASHTAGS ON CONCERNER.ID_HASHTAGS = HASHTAGS.ID_HASHTAGS WHERE NAME <> :hashtag_name LIMIT :length";
+    $sth = $db->prepare($sql);
+    $sth->execute(array(':hashtag_name' => $hashtag_name, ':length' => $length));
+
+    $result = $sth->fetchAll();
+
+    return $result;
+
+  } catch (\PDOException $e) {
+  print $e->getMessage();
+  return NULL;
+}
+
 }
