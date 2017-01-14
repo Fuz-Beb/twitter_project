@@ -212,17 +212,17 @@ function mention_user($pid, $uid) {
  * @return the array of user objects mentioned
  */
 function get_mentioned($pid) {
-
+print_r($pid);
     try {
         $i = 0;
         $db = \Db::dbc();
         $sth = $db->prepare("SELECT `ID_USER` FROM `MENTIONNER` WHERE `ID_TWEET` = :pid");
         $sth->execute(array(':pid' => $pid));
 
-        $arrayObj[] = (object) array();
+        $arrayObj = (object) array();
 
         while($result = $sth->fetch()) {
-            $arrayObj[$i] = \Model\User\get($result[0]);
+            $arrayObj = \Model\User\get($result[0]);
             $i++;
         }
 
@@ -252,7 +252,7 @@ function destroy($id) {
         $sth->execute(array(':id' => $id));
 
         return true;
-        
+
     } catch (\PDOException $e) {
         print $e->getMessage();
         return false;
@@ -276,11 +276,11 @@ function search($string) {
         if ($result = $sth->fetch()) {
             $arrayObj[] = (object) array();
             $arrayObj[0] = get($result[0]);
-            $i++; 
+            $i++;
 
             while($result = $sth->fetch()) {
                     $arrayObj[$i] = get($result[0]);
-                    $i++;                
+                    $i++;
             }
         }
         else
@@ -392,19 +392,32 @@ function get_likes($pid) {
         $sth = $db->prepare("SELECT `ID_USER` FROM `AIMER` WHERE `ID_TWEET` = :pid");
         $sth->execute(array(':pid' => $pid));
 
-        $arrayObj[] = (object) array();
+        $obj = (object) array();
 
         while($result = $sth->fetch()) {
-            $arrayObj[$i] = get($result[0]);
+            $obj = \Model\User\get($result[0]);
             $i++;
         }
+
+        return $obj;
+
+/*
+//
+        $obj = (object) array();
+        $obj->id = $id;
+        $obj->text = $array[1];
+        $obj->date = new \DateTime($array[2]);
+        $obj->author = \Model\User\get($array[0]);
+
+        return $obj;
+*/
 
     } catch (\PDOException $e) {
         print $e->getMessage();
         return NULL;
     }
 
-    return $arrayObj;
+
 }
 
 /**

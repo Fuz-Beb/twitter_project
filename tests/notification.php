@@ -19,7 +19,7 @@ class NotificationTest extends TestCase
             "user1@mail.com",
             ""
         );
-        
+
         self::$uids[] = User\create(
             "userpost2",
             "User 2",
@@ -28,9 +28,10 @@ class NotificationTest extends TestCase
             ""
         );
         self::$pids = [];
-        
+
         self::$pids[] = Post\create(self::$uids[0], "this is a searchid1 test");
         self::$pids[] = Post\create(self::$uids[1], "this searchid2 is a test");
+
     }
 
     public function testLikedNotification()
@@ -48,7 +49,7 @@ class NotificationTest extends TestCase
         $this->assertTrue(Notification\liked_notification_seen(self::$pids[1], self::$uids[0]));
         $n = Notification\get_liked_notifications(self::$uids[1]);
         $this->assertNotEquals($n[0]->reading_date, null);
-        
+
         Post\unlike(self::$uids[0], self::$pids[1]);
         $n = Notification\get_liked_notifications(self::$uids[1]);
         $this->assertEmpty($n);
@@ -56,7 +57,7 @@ class NotificationTest extends TestCase
 
     /**
      * @depends testLikedNotification
-     */  
+     */
     public function testMentionedNotification()
     {
         Post\mention_user(self::$pids[0], self::$uids[1]);
@@ -80,7 +81,7 @@ class NotificationTest extends TestCase
 
     /**
      * @depends testMentionedNotification
-     */  
+     */
     public function testFollowedNotification()
     {
         User\follow(self::$uids[0], self::$uids[1]);
@@ -94,7 +95,7 @@ class NotificationTest extends TestCase
         $this->assertTrue(Notification\followed_notification_seen(self::$uids[1], self::$uids[0]));
         $n = Notification\get_followed_notifications(self::$uids[1]);
         $this->assertNotEquals($n[0]->reading_date, null);
-        
+
         User\unfollow(self::$uids[0], self::$uids[1]);
         $n = Notification\get_followed_notifications(self::$uids[1]);
         $this->assertEmpty($n);
@@ -102,7 +103,7 @@ class NotificationTest extends TestCase
 
     /**
      * @depends testFollowedNotification
-     */  
+     */
     public function testListAllNotifications()
     {
         Post\mention_user(self::$pids[1], self::$uids[1]);
@@ -110,7 +111,7 @@ class NotificationTest extends TestCase
         User\follow(self::$uids[0], self::$uids[1]);
         sleep(1);
         Post\like(self::$uids[0], self::$pids[1]);
-        
+
         $n = Notification\list_all_notifications(self::$uids[1]);
         $this->assertEquals(count($n), 3);
         $this->assertEquals("mentioned", $n[2]->type);

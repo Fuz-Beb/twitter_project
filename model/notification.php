@@ -18,13 +18,46 @@ use \PDOException;
  * @warning the reading_date attribute is either a DateTime object or null (if it hasn't been read)
  */
 function get_liked_notifications($uid) {
-    return [(object) array(
-        "type" => "liked",
-        "post" => \Model\Post\get(1),
-        "liked_by" => \Model\User\get(3),
-        "date" => new \DateTime("NOW"),
-        "reading_date" => new \DateTime("NOW")
-    )];
+
+  try {
+      $i = 0;
+      $db = \Db::dbc();
+      $sth = $db->prepare("SELECT AIMER.ID_TWEET,`DATE`, `DATE_READ` FROM `AIMER` INNER JOIN TWEET ON AIMER.ID_TWEET = TWEET.ID_TWEET WHERE TWEET.ID_USER = :uid");
+      $sth->execute(array(':uid' => $uid));
+
+      if($sth->rowCount() < 1)
+          return NULL;
+
+      $arrayObj[] = (object) array();
+
+      while($array = $sth->fetch()) {
+
+          //$arrayObj[$i] = (object) array();
+          $arrayObj[$i]->type = "liked";
+          $arrayObj[$i]->post = \Model\Post\get($array[0]);
+
+          //$arrayObj[$i]->liked_by  = (object) array();
+          $arrayObj[$i]->liked_by = \Model\Post\get_likes($array[0]);
+
+
+
+          $arrayObj[$i]->date = new \DateTime($array[1]);
+
+          if($array[2] == NULL)
+              $arrayObj[$i]->reading_date = NULL;
+          else
+              $arrayObj[$i]->reading_date = new \DateTime($array[2]);
+
+          $i++;
+      }
+
+
+      return $arrayObj;
+
+  } catch (\PDOException $e) {
+      print $e->getMessage();
+      return NULL;
+  }
 }
 
 /**
@@ -34,7 +67,27 @@ function get_liked_notifications($uid) {
  * @return true if everything went ok, false else
  */
 function liked_notification_seen($pid, $uid) {
-    return false;
+
+  try {
+      $db = \Db::dbc();
+      $sth = $db->prepare("SELECT `NOTIF` FROM `AIMER` WHERE `ID_TWEET` = :uid AND `ID_USER` = :pid");
+      $sth->execute(array(':uid' => $uid, ':pid' => $pid));
+
+      $respond = $sth->fetch();
+
+      if($respond = 1)
+      {
+          $db = \Db::dbc();
+          $sth = $db->prepare("UPDATE `AIMER` SET `NOTIF` = '0', `DATE_READ` = CURRENT_TIME() WHERE `AIMER`.`ID_TWEET` = :pid AND `AIMER`.`ID_USER` = :uid;");
+          $sth->execute(array(':uid' => $uid, ':pid' => $pid));
+      }
+
+      return true;
+
+  } catch (\PDOException $e) {
+      print $e->getMessage();
+      return false;
+  }
 }
 
 /**
@@ -46,13 +99,47 @@ function liked_notification_seen($pid, $uid) {
  * @warning the reading_date object is either a DateTime object or null (if it hasn't been read)
  */
 function get_mentioned_notifications($uid) {
-    return [(object) array(
-        "type" => "mentioned",
-        "post" => \Model\Post\get(1),
-        "mentioned_by" => \Model\User\get(3),
-        "date" => new \DateTime("NOW"),
-        "reading_date" => null
-    )];
+
+  try {
+      $i = 0;
+      $db = \Db::dbc();
+      $sth = $db->prepare("SELECT MENTIONNER.ID_TWEET,`DATE`, `DATE_READ` FROM `MENTIONNER` INNER JOIN TWEET ON MENTIONNER.ID_TWEET = TWEET.ID_TWEET WHERE TWEET.ID_USER = :uid");
+      $sth->execute(array(':uid' => $uid));
+
+      if($sth->rowCount() < 1)
+          return NULL;
+
+      $arrayObj[] = (object) array();
+
+      while($array = $sth->fetch()) {
+
+          //$arrayObj[$i] = (object) array();
+          $arrayObj[$i]->type = "mentioned";
+          $arrayObj[$i]->post = \Model\Post\get($array[0]);
+
+          //$arrayObj[$i]->liked_by  = (object) array();
+          $arrayObj[$i]->mentioned_by = \Model\Post\get_mentioned($array[0]);
+
+
+
+          $arrayObj[$i]->date = new \DateTime($array[1]);
+
+          if($array[2] == NULL)
+              $arrayObj[$i]->reading_date = NULL;
+          else
+              $arrayObj[$i]->reading_date = new \DateTime($array[2]);
+
+          $i++;
+      }
+
+      print_r($arrayObj);
+
+      return $arrayObj;
+
+  } catch (\PDOException $e) {
+      print $e->getMessage();
+      return NULL;
+  }
 }
 
 /**
@@ -62,7 +149,29 @@ function get_mentioned_notifications($uid) {
  * @return true if everything went ok, false else
  */
 function mentioned_notification_seen($uid, $pid) {
-    return false;
+
+  print_r($uid);
+  print_r($pid);
+  try {
+      $db = \Db::dbc();
+      $sth = $db->prepare("SELECT `NOTIF` FROM `MENTIONNER` WHERE `ID_TWEET` = :uid AND `ID_USER` = :pid");
+      $sth->execute(array(':uid' => $uid, ':pid' => $pid));
+
+      $respond = $sth->fetch();
+
+      if($respond = 1)
+      {
+          $db = \Db::dbc();
+          $sth = $db->prepare("UPDATE `MENTIONNER` SET `NOTIF` = '0', `DATE_READ` = CURRENT_TIME() WHERE `MENTIONNER`.`ID_TWEET` = :pid AND `MENTIONNER`.`ID_USER` = :uid;");
+          $sth->execute(array(':uid' => $uid, ':pid' => $pid));
+      }
+
+      return true;
+
+  } catch (\PDOException $e) {
+      print $e->getMessage();
+      return false;
+  }
 }
 
 /**
@@ -127,4 +236,3 @@ function notification_seen($uid, $notification) {
     }
     return false;
 }
-
