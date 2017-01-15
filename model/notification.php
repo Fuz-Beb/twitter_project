@@ -22,7 +22,7 @@ function get_liked_notifications($uid) {
   try {
       $i = 0;
       $db = \Db::dbc();
-      $sth = $db->prepare("SELECT AIMER.ID_TWEET,`DATE`, `DATE_READ` FROM `AIMER` INNER JOIN TWEET ON AIMER.ID_TWEET = TWEET.ID_TWEET WHERE TWEET.ID_USER = :uid");
+      $sth = $db->prepare("SELECT AIMER.ID_TWEET,`DATE_NOTIF`, `DATE_READ` FROM `AIMER` INNER JOIN TWEET ON AIMER.ID_TWEET = TWEET.ID_TWEET WHERE TWEET.ID_USER = :uid");
       $sth->execute(array(':uid' => $uid));
 
       if($sth->rowCount() < 1)
@@ -103,7 +103,7 @@ function get_mentioned_notifications($uid) {
   try {
       $i = 0;
       $db = \Db::dbc();
-      $sth = $db->prepare("SELECT MENTIONNER.ID_TWEET, `DATE`, `DATE_READ`, TWEET.ID_USER AS AUTEUR FROM `MENTIONNER` INNER JOIN TWEET ON MENTIONNER.ID_TWEET = TWEET.ID_TWEET WHERE MENTIONNER.ID_USER = :uid");
+      $sth = $db->prepare("SELECT MENTIONNER.ID_TWEET, `DATE_NOTIF`, `DATE_READ`, TWEET.ID_USER AS AUTEUR FROM `MENTIONNER` INNER JOIN TWEET ON MENTIONNER.ID_TWEET = TWEET.ID_TWEET WHERE MENTIONNER.ID_USER = :uid");
       $sth->execute(array(':uid' => $uid));
 
       if($sth->rowCount() < 1)
@@ -177,7 +177,7 @@ function get_followed_notifications($uid) {
   try {
       $i = 0;
       $db = \Db::dbc();
-      $sth = $db->prepare("SELECT `ID_USER`, `DATE`, `DATE_READ` FROM `SUIVRE` WHERE `ID_USER_1` = :uid");
+      $sth = $db->prepare("SELECT `ID_USER`, `DATE_NOTIF`, `DATE_READ` FROM `SUIVRE` WHERE `ID_USER_1` = :uid");
       $sth->execute(array(':uid' => $uid));
 
       if($sth->rowCount() < 1)
