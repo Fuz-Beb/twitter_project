@@ -17,35 +17,27 @@ use \PDOException;
 function attach($pid, $hashtag_name) {
 
   try {
+    // Regarde si le hashtag fourni existe
     $db = \Db::dbc();
-    $sql = "SELECT `ID_HASHTAGS` FROM `HASHTAGS` WHERE `NAME` LIKE ':hashtag_name'";
+    $sql = "SELECT `ID_HASHTAGS` FROM `HASHTAGS` WHERE `NAME` LIKE :hashtag_name";
     $sth = $db->prepare($sql);
     $sth->execute(array(':hashtag_name' => $hashtag_name));
 
+    // S'il n'existe pas
     if($sth->rowCount() < 1) {
-        $sql = "INSERT INTO `HASHTAGS` (`ID_HASHTAGS`, `NAME`) VALUES (NULL, ':hashtag_name');";
+        $sql = "INSERT INTO `HASHTAGS` (`ID_HASHTAGS`, `NAME`) VALUES (NULL, :hashtag_name);";
         $sth = $db->prepare($sql);
         $sth->execute(array(':hashtag_name' => $hashtag_name));
 
-        $sql = "SELECT `ID_HASHTAGS` FROM `HASHTAGS` WHERE `NAME` LIKE ':hashtag_name'";
+        $sql = "SELECT `ID_HASHTAGS` FROM `HASHTAGS` WHERE `NAME` LIKE :hashtag_name";
         $sth = $db->prepare($sql);
         $sth->execute(array(':hashtag_name' => $hashtag_name));
     }
 
     $respond = $sth->fetch();
-    $sql = "SELECT `ID_TWEET` FROM `CONCERNER` WHERE `ID_HASHTAGS` LIKE ':respond'";
+    $sql = "INSERT INTO `CONCERNER` (`ID_TWEET`, `ID_HASHTAGS`) VALUES (:pid, :respond);";
     $sth = $db->prepare($sql);
-    $sth->execute(array(':respond' => $respond[0]));
-
-    if($sth->rowCount() < 1) {
-        $sql = "INSERT INTO `CONCERNER` (`ID_TWEET`, `ID_HASHTAGS`) VALUES (:pid, :respond);";
-        $sth = $db->prepare($sql);
-        $sth->execute(array(':pid' => $pid, ':respond' => $respond[0]));
-    }
-
-    else {
-      return false;
-    }
+    $sth->execute(array(':pid' => $pid, ':respond' => $respond[0]));
 
     return true;
 
@@ -63,14 +55,17 @@ function attach($pid, $hashtag_name) {
 function list_hashtags() {
 
   try {
+    $i = 0;
     $db = \Db::dbc();
     $sql = "SELECT NAME FROM `HASHTAGS`";
-    $sth = $db->prepare($sql);
-    $db->query($sql);
+    $sth = $db->query($sql);
 
-    $result = $sth->fetchAll();
-
-    return $result;
+    $array = array();
+    while ($result = $sth->fetch()) {
+        $array[$i] = $result[0];
+        $i++;
+    }
+    return $array;
 
   } catch (\PDOException $e) {
   print $e->getMessage();
@@ -87,14 +82,20 @@ function list_hashtags() {
 function list_popular_hashtags($length) {
 
     try {
-      $db = \Db::dbc();
-      $sql="SELECT `ID_HASHTAGS` FROM CONCERNER GROUP BY ID_HASHTAGS ORDER BY COUNT(ID_TWEET) DESC LIMIT :length";
-      $sth = $db->prepare($sql);
-      $sth->execute(array(':length' => $length));
 
-      $result = $sth->fetchAll();
+        $db = \Db::dbc();
+        $sql = "SELECT `ID_HASHTAGS` FROM `CONCERNER` GROUP BY `ID_HASHTAGS` ORDER BY COUNT(`ID_TWEET`) DESC LIMIT :length";
+        $sth = $db->query($sql);
+        /*$sth = $db->prepare($sql);
+        $sth->execute(array(':length' => $length));*/
 
-      return $result;
+        $array = array();
+        while ($result = $sth->fetch()) {
+            $array[$i] = $result[0];
+            $i++;
+        }
+
+    return $array;
 
     } catch (\PDOException $e) {
     print $e->getMessage();

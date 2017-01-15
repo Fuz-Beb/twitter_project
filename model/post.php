@@ -110,22 +110,30 @@ function create($author_id, $text, $response_to=null) {
             $sql = "INSERT INTO `TWEET` (`ID_TWEET`, `ID_USER`, `ID_TWEET_REPONSE`, `CONTENT`, `DATE_PUBLI`) VALUES (NULL, '$author_id', NULL, '$text', '$newDate')";
         else
             $sql = "INSERT INTO `TWEET` (`ID_TWEET`, `ID_USER`, `ID_TWEET_REPONSE`, `CONTENT`, `DATE_PUBLI`) VALUES (NULL, '$author_id', '$response_to', '$text', '$newDate')";
-
         $db->query($sql);
-        $sql = "SELECT `ID_TWEET` FROM `TWEET` WHERE `ID_USER` = :id AND `DATE_PUBLI` LIKE :datePubli";
-        $sth = $db->prepare($sql);
-        $sth->execute(array(':id' => $author_id, ':datePubli' => $newDate));
+
+        // Récupération de l'id du dernier tweet créé
+        $sql = "SELECT `ID_TWEET` FROM `TWEET` ORDER BY `ID_TWEET` DESC LIMIT 1";
+        $sth = $db->query($sql);
         $result = $sth->fetch();
 
-        /* Recherche de mention utilisateur dans un texte */
-        $array = extract_mentions($text);
-        foreach($array as $value) {
+        //Recherche de mention utilisateur dans un texte
+        $arrayMention = extract_mentions($text);
+        foreach($arrayMention as $value1) {
             $sql = "SELECT `ID_USER` FROM `UTILISATEUR` WHERE `USERNAME` LIKE :username";
             $sth = $db->prepare($sql);
-            $sth->execute(array(':username' => $value));
-            $value = $sth->fetch();
-            mention_user($result[0], $value[0]);
+            $sth->execute(array(':username' => $value1));
+            $value1 = $sth->fetch();
+            mention_user($result[0], $value1[0]);
         }
+
+        // Recherche des hashtags dans un texte
+        $arrayHashtags = extract_hashtags($text);
+
+        foreach($arrayHashtags as $value2) {
+            \Model\Hashtag\attach($result[0], $value2);
+        }
+
         return $result[0];
 
     } catch (\PDOException $e) {
@@ -464,7 +472,7 @@ function unlike($uid, $pid) {
         $sth = $db->prepare($sql);
         $sth->execute(array(':pid' => $pid, ':uid' => $uid));
         return true;
-        
+
     } catch (\PDOException $e) {
         print $e->getMessage();
         return false;

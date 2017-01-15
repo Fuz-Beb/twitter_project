@@ -30,6 +30,7 @@ class HashtagTest extends TestCase
         self::$pids[] = Post\create(self::$uid, "This is a sample text #hashtag3");
         self::$pids[] = Post\create(self::$uid, "This is a sample text #hashtag3");
         self::$pids[] = Post\create(self::$uid, "Two hashtags #hash #tag");
+
     }
 
     public function testAttach()
