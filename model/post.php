@@ -227,7 +227,7 @@ function destroy($id) {
         $sth = $db->prepare($sql);
         $sth->execute(array(':id' => $id));
         return true;
-        
+
     } catch (\PDOException $e) {
         print $e->getMessage();
         return false;
@@ -250,10 +250,10 @@ function search($string) {
         if ($result = $sth->fetch()) {
             $arrayObj[] = (object) array();
             $arrayObj[0] = get($result[0]);
-            $i++; 
+            $i++;
             while($result = $sth->fetch()) {
                     $arrayObj[$i] = get($result[0]);
-                    $i++;                
+                    $i++;
             }
         }
         else
@@ -356,9 +356,9 @@ function get_likes($pid) {
         $sth = $db->prepare("SELECT `ID_USER` FROM `AIMER` WHERE `ID_TWEET` = :pid");
         $sth->execute(array(':pid' => $pid));
 
-        $arrayObj[] = (object) array();
+        $arrayObj = (object) array();
         while($result = $sth->fetch()) {
-            $arrayObj[$i] = get($result[0]);
+            $arrayObj = \Model\User\get($result[0]);
             $i++;
         }
         return $arrayObj;
@@ -367,7 +367,7 @@ function get_likes($pid) {
         print $e->getMessage();
         return NULL;
     }
-    
+
 }
 /**
  * Get a post's responses
@@ -464,7 +464,7 @@ function unlike($uid, $pid) {
         $sth = $db->prepare($sql);
         $sth->execute(array(':pid' => $pid, ':uid' => $uid));
         return true;
-        
+
     } catch (\PDOException $e) {
         print $e->getMessage();
         return false;
