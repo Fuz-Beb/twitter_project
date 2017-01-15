@@ -82,12 +82,10 @@ function list_hashtags() {
 function list_popular_hashtags($length) {
 
     try {
-
+        $i = 0;
         $db = \Db::dbc();
-        $sql = "SELECT `ID_HASHTAGS` FROM `CONCERNER` GROUP BY `ID_HASHTAGS` ORDER BY COUNT(`ID_TWEET`) DESC LIMIT :length";
-        $sth = $db->query($sql);
-        /*$sth = $db->prepare($sql);
-        $sth->execute(array(':length' => $length));*/
+        $sth = $db->prepare("SELECT `NAME` FROM `HASHTAGS` NATURAL JOIN `CONCERNER` GROUP BY `CONCERNER`.`ID_HASHTAGS` ORDER BY COUNT(`ID_TWEET`) DESC LIMIT {$length}");
+        $sth->execute();
 
         $array = array();
         while ($result = $sth->fetch()) {
@@ -113,8 +111,9 @@ function get_posts($hashtag_name) {
 // Propable qu'elle ne fonctionne pas avec l'histoire des objets postObj
 
   try {
+    $i = 0;
     $db = \Db::dbc();
-    $sql="SELECT `ID_TWEET` FROM `CONCERNER` INNER JOIN HASHTAGS ON CONCERNER.ID_HASHTAGS = HASHTAGS.ID_HASHTAGS AND HASHTAGS.NAME = :hashtag_name";
+    $sql="SELECT `ID_TWEET` FROM `CONCERNER` INNER JOIN `HASHTAGS` ON `CONCERNER`.`ID_HASHTAGS` = `HASHTAGS`.`ID_HASHTAGS` AND `HASHTAGS`.`NAME` = :hashtag_name";
     $sth = $db->prepare($sql);
     $sth->execute(array(':hashtag_name' => $hashtag_name));
 
@@ -126,7 +125,7 @@ function get_posts($hashtag_name) {
     $postObj = [];
 
     while($result = $sth->fetch()) {
-        $postObj[$i] = get_with_joins($result);
+        $postObj[$i] = \Model\Post\get_with_joins($result[0]);
         $i++;
     }
 
@@ -147,15 +146,18 @@ function get_posts($hashtag_name) {
 function get_related_hashtags($hashtag_name, $length) {
 
   try {
+    $i = 0;
     $db = \Db::dbc();
+    $sth = $db->prepare("SELECT `NAME` FROM `HASHTAGS` WHERE `NAME` <> :hashtag_name AND `ID_HASHTAGS` IN ( SELECT `ID_HASHTAGS` FROM `CONCERNER` WHERE `ID_TWEET` IN ( SELECT `ID_TWEET` FROM `CONCERNER` GROUP BY `ID_TWEET` HAVING (COUNT(`ID_TWEET`) > 1) )) LIMIT {$length}");
+    $sth->execute(array(':hashtag_name' => $hashtag_name));
 
-    $sql="SELECT DISTINCT CONCERNER.ID_HASHTAGS FROM `CONCERNER` INNER JOIN HASHTAGS ON CONCERNER.ID_HASHTAGS = HASHTAGS.ID_HASHTAGS WHERE NAME <> :hashtag_name LIMIT :length";
-    $sth = $db->prepare($sql);
-    $sth->execute(array(':hashtag_name' => $hashtag_name, ':length' => $length));
+    $array = array();
+    while ($result = $sth->fetch()) {
+        $array[$i] = $result[0];
+        $i++;
+    }
 
-    $result = $sth->fetchAll();
-
-    return $result;
+    return $array;
 
   } catch (\PDOException $e) {
   print $e->getMessage();
@@ -163,3 +165,5 @@ function get_related_hashtags($hashtag_name, $length) {
 }
 
 }
+
+
