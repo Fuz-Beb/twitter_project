@@ -103,7 +103,7 @@ function get_mentioned_notifications($uid) {
   try {
       $i = 0;
       $db = \Db::dbc();
-      $sth = $db->prepare("SELECT MENTIONNER.ID_TWEET,`DATE`, `DATE_READ` FROM `MENTIONNER` INNER JOIN TWEET ON MENTIONNER.ID_TWEET = TWEET.ID_TWEET WHERE TWEET.ID_USER = :uid");
+      $sth = $db->prepare("SELECT MENTIONNER.ID_TWEET, `DATE`, `DATE_READ`, TWEET.ID_USER AS AUTEUR FROM `MENTIONNER` INNER JOIN TWEET ON MENTIONNER.ID_TWEET = TWEET.ID_TWEET WHERE MENTIONNER.ID_USER = :uid");
       $sth->execute(array(':uid' => $uid));
 
       if($sth->rowCount() < 1)
@@ -113,17 +113,12 @@ function get_mentioned_notifications($uid) {
 
       while($array = $sth->fetch()) {
 
-          //$arrayObj[$i] = (object) array();
           $arrayObj[$i]->type = "mentioned";
           $arrayObj[$i]->post = \Model\Post\get($array[0]);
-
-          //$arrayObj[$i]->liked_by  = (object) array();
-          $arrayObj[$i]->mentioned_by = \Model\Post\get_mentioned($array[0]);
-
-
-
+          $arrayObj[$i]->mentioned_by = \Model\User\get($array[3]);
           $arrayObj[$i]->date = new \DateTime($array[1]);
 
+          // PERMET DE METTRE A NULL SI PAS D'ARGUMENT SINON METTRE VALEUR
           if($array[2] == NULL)
               $arrayObj[$i]->reading_date = NULL;
           else
@@ -131,8 +126,6 @@ function get_mentioned_notifications($uid) {
 
           $i++;
       }
-
-      print_r($arrayObj);
 
       return $arrayObj;
 
@@ -150,8 +143,6 @@ function get_mentioned_notifications($uid) {
  */
 function mentioned_notification_seen($uid, $pid) {
 
-  print_r($uid);
-  print_r($pid);
   try {
       $db = \Db::dbc();
       $sth = $db->prepare("SELECT `NOTIF` FROM `MENTIONNER` WHERE `ID_TWEET` = :uid AND `ID_USER` = :pid");
@@ -182,12 +173,39 @@ function mentioned_notification_seen($uid, $pid) {
  * @warning the reading_date object is either a DateTime object or null (if it hasn't been read)
  */
 function get_followed_notifications($uid) {
-    return [(object) array(
-        "type" => "followed",
-        "user" => \Model\User\get(1),
-        "date" => new \DateTime("NOW"),
-        "reading_date" => new \DateTime("NOW")
-    )];
+
+  try {
+      $i = 0;
+      $db = \Db::dbc();
+      $sth = $db->prepare("SELECT `ID_USER`, `DATE`, `DATE_READ` FROM `SUIVRE` WHERE `ID_USER_1` = :uid");
+      $sth->execute(array(':uid' => $uid));
+
+      if($sth->rowCount() < 1)
+          return NULL;
+
+      $arrayObj[] = (object) array();
+
+      while($array = $sth->fetch()) {
+
+          $arrayObj[$i]->type = "followed";
+          $arrayObj[$i]->user = \Model\User\get($array[0]);
+          $arrayObj[$i]->date = new \DateTime($array[1]);
+
+          // PERMET DE METTRE A NULL SI PAS D'ARGUMENT SINON METTRE VALEUR
+          if($array[2] == NULL)
+              $arrayObj[$i]->reading_date = NULL;
+          else
+              $arrayObj[$i]->reading_date = new \DateTime($array[2]);
+
+          $i++;
+      }
+
+      return $arrayObj;
+
+  } catch (\PDOException $e) {
+      print $e->getMessage();
+      return NULL;
+  }
 }
 
 /**
@@ -197,7 +215,27 @@ function get_followed_notifications($uid) {
  * @return true if everything went ok, false else
  */
 function followed_notification_seen($followed_id, $follower_id) {
-    return false;
+
+  try {
+      $db = \Db::dbc();
+      $sth = $db->prepare("SELECT `NOTIF` FROM `SUIVRE` WHERE `ID_USER` = :follower_id AND `ID_USER_1` = :followed_id");
+      $sth->execute(array(':followed_id' => $followed_id, ':follower_id' => $follower_id));
+
+      $respond = $sth->fetch();
+
+      if($respond = 1)
+      {
+          $db = \Db::dbc();
+          $sth = $db->prepare("UPDATE `SUIVRE` SET `NOTIF` = '0', `DATE_READ` = CURRENT_TIME() WHERE `SUIVRE`.`ID_USER` = :follower_id AND `SUIVRE`.`ID_USER_1` = :followed_id;");
+          $sth->execute(array(':followed_id' => $followed_id, ':follower_id' => $follower_id));
+      }
+
+      return true;
+
+  } catch (\PDOException $e) {
+      print $e->getMessage();
+      return false;
+  }
 }
 
 /**
