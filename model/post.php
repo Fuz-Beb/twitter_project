@@ -409,11 +409,20 @@ function get_stats($pid) {
 
     try {
         $db = \Db::dbc();
-        $nb_likes = get_likes($pid);
-        $nb_Resp = get_responses($pid);
+        $sth = $db->prepare("SELECT COUNT(*) FROM `AIMER` WHERE `ID_TWEET` = :pid");
+        $sth->execute(array(':pid' => $pid));
+        $response = $sth->fetch();
+        $nb_likes = $response[0];
+
+        $sth = $db->prepare("SELECT COUNT(*) FROM `TWEET` WHERE`ID_TWEET_REPONSE` = :pid");
+        $sth->execute(array(':pid' => $pid));
+        $response = $sth->fetch();
+        $nb_resp = $response[0];
+
         $obj = (object) array();
-        $obj->nb_likes = $nb_likes->count();
-        $obj->nb_Resp = $nb_Resp->count();
+        $obj->nb_likes = $nb_likes;
+        $obj->nb_Resp = $nb_resp;
+
         return $obj;
 
     } catch (\PDOException $e) {

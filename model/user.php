@@ -164,10 +164,10 @@ function search($string) {
         if ($result = $sth->fetch()) {
             $arrayObj[] = (object) array();
             $arrayObj[0] = get($result[0]);
-            $i++; 
+            $i++;
             while($result = $sth->fetch()) {
                     $arrayObj[$i] = get($result[0]);
-                    $i++;                
+                    $i++;
             }
         }
         else
@@ -179,7 +179,7 @@ function search($string) {
                 if ($result[1] !== 0 || $result[2] !== 0)
                 {
                     $arrayObj[$i] = get($result[0]);
-                    $i++;                
+                    $i++;
                 }
             }
         }
@@ -288,16 +288,27 @@ function get_stats($uid) {
         $sql = "SELECT COUNT(`ID_TWEET`) FROM `TWEET` WHERE `ID_USER` = :uid";
         $sth = $db->prepare($sql);
         $sth->execute(array(':uid' => $uid));
-        $nb_posts = $sth->fetch();
+
+        $response = $sth->fetch();
+        $nb_posts = $response[0];
+
+        $sth = $db->prepare("SELECT COUNT(*) FROM `SUIVRE` WHERE `ID_USER` = :uid");
+        $sth->execute(array(':uid' => $uid));
+        $response = $sth->fetch();
+        $nb_followers = $response[0];
+
+        $sth = $db->prepare("SELECT COUNT(*) FROM `SUIVRE` WHERE `ID_USER_1` = :uid");
+        $sth->execute(array(':uid' => $uid));
+        $response = $sth->fetch();
+        $nb_following = $response[0];
+
         $obj = (object) array();
-        $obj->nb_posts = $nb_posts[0];
-        $nb_followers = get_followers($uid);
-        $nb_following = get_followings($uid);
-        $obj = (object) array();
-        $obj->nb_posts = $nb_posts[0];
-        $obj->nb_followers = $nb_followers->count();
-        $obj->nb_following = $nb_following->count();
+        $obj->nb_posts = $nb_posts;
+        $obj->nb_followers = $nb_followers;
+        $obj->nb_following = $nb_following;
+
         return $obj;
+
     } catch (\PDOException $e) {
         print $e->getMessage();
         return NULL;
