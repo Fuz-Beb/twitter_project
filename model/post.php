@@ -297,20 +297,13 @@ function list_all($date_sorted=false) {
         $db = \Db::dbc();
 
         if($date_sorted == "ASC")
-        {
             $sql = "SELECT `ID_TWEET` FROM `TWEET` ORDER BY `DATE_PUBLI` ASC";
-            $sth = $db->query($sql);
-        }
         elseif ($date_sorted == "DESC")
-        {
             $sql = "SELECT `ID_TWEET` FROM `TWEET` ORDER BY `DATE_PUBLI` DESC";
-            $sth = $db->query($sql);
-        }
         elseif($date_sorted == false || $date_sorted == FALSE)
-        {
             $sql = "SELECT `ID_TWEET` FROM `TWEET`";
-            $sth = $db->query($sql);
-        }
+
+        $sth = $db->query($sql);
 
         $arrayObj[] = (object) array();
         while($result = $sth->fetch()) {
@@ -335,9 +328,16 @@ function list_user_posts($id, $date_sorted="DESC") {
     try {
         $i = 0;
         $db = \Db::dbc();
-        $sql = "SELECT `ID_TWEET` FROM `TWEET` WHERE `ID_USER` = :id ORDER BY DATE_PUBLI :date_sorted";
+
+        if($date_sorted == "ASC")
+        $sql = "SELECT `ID_TWEET` FROM `TWEET` WHERE `ID_USER` = :id ORDER BY DATE_PUBLI ASC";
+        elseif ($date_sorted == "DESC")
+        $sql = "SELECT `ID_TWEET` FROM `TWEET` WHERE `ID_USER` = :id ORDER BY DATE_PUBLI DESC";
+        elseif($date_sorted == false || $date_sorted == FALSE)
+        $sql = "SELECT `ID_TWEET` FROM `TWEET` WHERE `ID_USER` = :id";
+
         $sth = $db->prepare($sql);
-        $sth->execute(array(':id' => $id, ':date_sorted' => $date_sorted));
+        $sth->execute(array(':id' => $id));
 
         $arrayObj[] = (object) array();
         while($result = $sth->fetch()) {
