@@ -24,8 +24,8 @@ class UserTest extends TestCase
         $this->assertEquals("User 1", $user->name, "Name should be 'User 1' instead of '$user->name'");
         $this->assertObjectHasAttribute("email", $user, "User object should have an email attribute");
         $this->assertEquals("user1@mail.com", $user->email, "Email should be 'user1@mail.com' instead of '$user->email'");
-        $this->assertEquals(User\check_auth($user->username, "password"), $user, "check_auth not working");
-        $this->assertEquals(User\check_auth_id($uid, User\hash_password("password")), $user, "check_auth_id not working");
+        $this->assertEquals($user, User\check_auth($user->username, "password"), "check_auth not working : should return a user object");
+        $this->assertEquals($user, User\check_auth_id($uid, User\hash_password("password")), "check_auth_id not working : should return a user object");
 
         $this->assertNull(User\get(-1), "get should return null if no user were fould");
         return $uid;
@@ -47,11 +47,11 @@ class UserTest extends TestCase
             "User couldn't be modified"
         );
         $user = User\get($uid);
-        $this->assertEquals($user->username, "user2", "modify should set the new username");
-        $this->assertEquals($user->name, "User 2", "modify should set the new name");
-        $this->assertEquals($user->email, "user2@mail.com", "modify should set the new username");
-        $this->assertTrue($user == User\check_auth($user->username, "password"), "modify should not alter the password");
-        $this->assertTrue($user == User\check_auth_id($uid, User\hash_password("password")), "modify should not alter the password");
+        $this->assertEquals("user2", $user->username, "modify should set the new username");
+        $this->assertEquals("User 2", $user->name, "modify should set the new name");
+        $this->assertEquals("user2@mail.com", $user->email, "modify should set the new username");
+        $this->assertEquals($user, User\check_auth($user->username, "password"), "modify should not alter the password");
+        $this->assertEquals($user, User\check_auth_id($uid, User\hash_password("password")), "modify should not alter the password");
         return $uid;
     }
 
@@ -84,8 +84,8 @@ class UserTest extends TestCase
             )
         );
         $user = User\get($uid);
-        $this->assertTrue($user == User\check_auth($user->username, "new password"), "Modify should set the new password properly");
-        $this->assertTrue($user == User\check_auth_id($uid, User\hash_password("new password")), "Modify should set the new password properly");
+        $this->assertEquals($user, User\check_auth($user->username, "new password"), "Modify should set the new password properly");
+        $this->assertEquals($user, User\check_auth_id($uid, User\hash_password("new password")), "Modify should set the new password properly");
         return $uid;
     }
     
@@ -116,7 +116,7 @@ class UserTest extends TestCase
     public function testGetByUsername($users)
     {
         foreach($users as $u) {
-            $this->assertEquals(User\get_by_username($u->username), $u, "get_by_username should return the user object if a user was found");
+            $this->assertEquals($u, User\get_by_username($u->username), "get_by_username should return the user object if a user was found");
         }
 
         $this->assertNull(User\get_by_username("nothing called like it"), "get_by_username should return null if no user with a given username were found");
@@ -132,13 +132,13 @@ class UserTest extends TestCase
             $r = User\search($u->name);
 
             $this->assertEquals(1, count($r), "search should search users with name");
-            $this->assertEquals($r[0], $u);
+            $this->assertEquals($u, $r[0]);
         }
         foreach($users as $u) {
             $r = User\search($u->username);
 
             $this->assertEquals(1, count($r), "search should search users with username");
-            $this->assertEquals($r[0], $u);
+            $this->assertEquals($u, $r[0]);
         }
 
         $r = User\search("user");
@@ -157,11 +157,11 @@ class UserTest extends TestCase
 
         $l = User\get_followers($users[1]->id);
         $this->assertEquals(1, count($l), "get_followers should return every follower users");
-        $this->assertEquals($users[0], $l[0], "get_followers should return user objects");
+        $this->assertEquals($l[0], $users[0], "get_followers should return user objects");
 
         $l = User\get_followings($users[0]->id);
         $this->assertEquals(1, count($l), "get_followings should return every following users");
-        $this->assertEquals($users[1], $l[0], "get_followings should return user objects");
+        $this->assertEquals($l[0], $users[1], "get_followings should return user objects");
 
         $this->assertTrue(User\unfollow($users[0]->id, $users[1]->id));
         $this->assertEmpty(User\get_followings($users[0]->id), "unfollow should make that a user is unfollowed");

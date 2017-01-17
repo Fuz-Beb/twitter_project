@@ -201,7 +201,7 @@ Mentioning a user is useful to draw his/her attention. By including \texttt{@the
 \subsection{\texttt{get\_mentioned(\$pid)}}
 \texttt{get\_mentioned} returns the list of the mentioned users in a given post.
 
-\subsection{\texttt{create(\$pid, \$uid)}}
+\subsection{\texttt{create(\$author\_id, \$text, \$response\_to=null)}}
 Now that you coded the functions that takes care about mentions, you must use them in \texttt{create} so that mentions are added when creating a post.
 
 \texttt{create} must handle making the mention associations while creating a post. To help, the function \texttt{extract\_mentions} (in \texttt{model/post.php}) is provided.
@@ -209,7 +209,7 @@ Now that you coded the functions that takes care about mentions, you must use th
 \section{Liking posts}
 
 \subsection{Presentation}
-A user can like (or fav, in a more twitterish language) a post. This association has to be modeled accordingly.
+A user can like a post. This association has to be modeled accordingly.
 
 \subsection{\texttt{like(\$uid, \$pid)}}
 \texttt{like} creates a like association. It must return a state boolean.

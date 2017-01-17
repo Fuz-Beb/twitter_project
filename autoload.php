@@ -9,6 +9,7 @@ function require_wildcard($w) {
     }
 }
 
+require_once("vendor/autoload.php");
 require_once("lib/db.php");
 require_wildcard("model/*.php");
 

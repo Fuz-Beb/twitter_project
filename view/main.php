@@ -28,9 +28,7 @@
                                 return $el->reading_date === null;
                             }
                         ));
-                        if($nb_notif != 0) {
-                            $nb_notif = " ($nb_notif)";
-                        }
+                        $nb_notif = $nb_notif > 0 ? " ($nb_notif)" : "";
                     ?>
                     <li class="pure-menu-item"><a href="notification.php" class="pure-menu-link">Notifications<?php echo $nb_notif; ?></a></li>
                     <?php }?>

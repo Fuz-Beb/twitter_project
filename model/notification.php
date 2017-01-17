@@ -104,7 +104,6 @@ function get_mentioned_notifications($uid) {
       $arrayObj[] = (object) array();
 
       while($array = $sth->fetch()) {
-
           $arrayObj[$i]->type = "mentioned";
           $arrayObj[$i]->post = \Model\Post\get($array[0]);
           $arrayObj[$i]->mentioned_by = \Model\User\get($array[3]);
