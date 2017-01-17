@@ -270,9 +270,6 @@ function search($string) {
         $sth = $db->prepare($sql);
         $sth->execute(array(':string' => $string));
 
-        if($sth->rowCount() < 1)
-            return $arrayObj = [];
-
         if ($result = $sth->fetch()) {
             $arrayObj[] = (object) array();
             $arrayObj[0] = get($result[0]);
@@ -287,6 +284,10 @@ function search($string) {
             $sql = "SELECT `ID_TWEET`, INSTR( `CONTENT`, '$string' ) FROM `TWEET`";
             $sth = $db->query($sql);
             $arrayObj[] = (object) array();
+
+            if($sth->rowCount() < 1)
+                return $arrayObj = [];
+
             while($result = $sth->fetch()) {
                 if ($result[1] != 0)
                 {
