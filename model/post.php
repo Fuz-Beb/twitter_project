@@ -55,14 +55,25 @@ function get_with_joins($id) {
         $i = 0;
         $db = \Db::dbc();
 
+        // Test si l'id fourni existe dans la base
+        $sql = "SELECT * FROM `TWEET` WHERE `ID_TWEET` = :id";
+        $sth = $db->prepare($sql);
+        $sth->execute(array(':id' => $id));
+
+        if($sth->rowCount() < 1)
+            return $arrayObj = (object) array();
+
         /* Récupération des 4 premiers attribut */
         $obj = get($id);
         $sth = $db->prepare("SELECT `ID_USER` FROM `AIMER` WHERE `ID_TWEET` = :id");
         $sth->execute(array(':id' => $id));
 
+        if ($sth->rowCount() < 1)
+            $likes = [];
+        else
+            $likes[] = (object) array();
+
         /* Récupération des objects des personnes qui ont like le post */
-        $likes[] = (object) array();
-        $likes = [];
         while($result = $sth->fetch()) {
             $likes[$i] = \Model\User\get($result[0]);
             $i++;
@@ -204,6 +215,10 @@ function get_mentioned($pid) {
         $db = \Db::dbc();
         $sth = $db->prepare("SELECT `ID_USER` FROM `MENTIONNER` WHERE `ID_TWEET` = :pid");
         $sth->execute(array(':pid' => $pid));
+
+        if($sth->rowCount() < 1)
+            return $arrayObj = [];
+
         $arrayObj[] = (object) array();
 
         while($result = $sth->fetch()) {
@@ -255,6 +270,9 @@ function search($string) {
         $sth = $db->prepare($sql);
         $sth->execute(array(':string' => $string));
 
+        if($sth->rowCount() < 1)
+            return $arrayObj = [];
+
         if ($result = $sth->fetch()) {
             $arrayObj[] = (object) array();
             $arrayObj[0] = get($result[0]);
@@ -305,6 +323,9 @@ function list_all($date_sorted=false) {
 
         $sth = $db->query($sql);
 
+        if($sth->rowCount() < 1)
+            return $arrayObj = [];
+
         $arrayObj[] = (object) array();
         while($result = $sth->fetch()) {
             $arrayObj[$i] = get($result[0]);
@@ -330,14 +351,17 @@ function list_user_posts($id, $date_sorted="DESC") {
         $db = \Db::dbc();
 
         if($date_sorted == "ASC")
-        $sql = "SELECT `ID_TWEET` FROM `TWEET` WHERE `ID_USER` = :id ORDER BY DATE_PUBLI ASC";
+            $sql = "SELECT `ID_TWEET` FROM `TWEET` WHERE `ID_USER` = :id ORDER BY DATE_PUBLI ASC";
         elseif ($date_sorted == "DESC")
-        $sql = "SELECT `ID_TWEET` FROM `TWEET` WHERE `ID_USER` = :id ORDER BY DATE_PUBLI DESC";
+            $sql = "SELECT `ID_TWEET` FROM `TWEET` WHERE `ID_USER` = :id ORDER BY DATE_PUBLI DESC";
         elseif($date_sorted == false || $date_sorted == FALSE)
-        $sql = "SELECT `ID_TWEET` FROM `TWEET` WHERE `ID_USER` = :id";
+            $sql = "SELECT `ID_TWEET` FROM `TWEET` WHERE `ID_USER` = :id";
 
         $sth = $db->prepare($sql);
         $sth->execute(array(':id' => $id));
+
+        if($sth->rowCount() < 1)
+            return $arrayObj = [];
 
         $arrayObj[] = (object) array();
         while($result = $sth->fetch()) {
@@ -364,6 +388,9 @@ function get_likes($pid) {
         $sth = $db->prepare("SELECT `ID_USER` FROM `AIMER` WHERE `ID_TWEET` = :pid");
         $sth->execute(array(':pid' => $pid));
 
+        if($sth->rowCount() < 1)
+            return $arrayObj = [];
+
         $arrayObj = (object) array();
         while($result = $sth->fetch()) {
             $arrayObj = \Model\User\get($result[0]);
@@ -384,22 +411,25 @@ function get_likes($pid) {
  */
 function get_responses($pid) {
 
-  try {
-      $i = 0;
-      $db = \Db::dbc();
-      $sth = $db->prepare("SELECT `ID_TWEET` FROM `TWEET` WHERE `ID_TWEET_REPONSE` = :pid");
-      $sth->execute(array(':pid' => $pid));
+try {
+    $i = 0;
+    $db = \Db::dbc();
+    $sth = $db->prepare("SELECT `ID_TWEET` FROM `TWEET` WHERE `ID_TWEET_REPONSE` = :pid");
+    $sth->execute(array(':pid' => $pid));
 
-      $arrayObj[] = (object) array();
-      while($result = $sth->fetch()) {
-          $arrayObj[$i] = get($result[0]);
-          $i++;
-      }
-      return $arrayObj;
+    if($sth->rowCount() < 1)
+        return $arrayObj = [];
 
-  } catch (\PDOException $e) {
-      print $e->getMessage();
-      return NULL;
+    $arrayObj[] = (object) array();
+        while($result = $sth->fetch()) {
+            $arrayObj[$i] = get($result[0]);
+            $i++;
+        }
+    return $arrayObj;
+
+    } catch (\PDOException $e) {
+        print $e->getMessage();
+        return NULL;
   }
 }
 /**
