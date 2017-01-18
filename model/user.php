@@ -15,22 +15,27 @@ use \PDOException;
 function get($id) {
     try {
         $db = \Db::dbc();
-        $sth = $db->prepare("SELECT `ID_USER`, `USERNAME`, `NAME`, `PASSWORD`, `EMAIL`, `AVATAR`, `SIGN_UP` FROM `UTILISATEUR` WHERE `ID_USER` = :id");
+        $sql = "SELECT `ID_USER`, `USERNAME`, `NAME`, `PASSWORD`, `EMAIL`, `AVATAR`, `SIGN_UP` FROM `UTILISATEUR` WHERE `ID_USER` = :id";
+        $sth = $db->prepare($sql);
         $sth->execute(array(':id' => $id));
-        if ($array = $sth->fetch())
-        {
-            $obj = (object) array();
-            $obj->id = $array[0];
-            $obj->username = $array[1];
-            $obj->name = $array[2];
-            $obj->password = $array[3];
-            $obj->email = $array[4];
-            $obj->avatar = $array[5];
-            $obj->sign_up = $array[6];
-            return $obj;
-        }
-        else
+        
+        // Retourne NULL si aucun utilisateur n'est trouvé
+        if($sth->rowCount() < 1)
             return NULL;
+
+        $array = $sth->fetch();
+        
+        $obj = (object) array();
+        $obj->id = $array[0];
+        $obj->username = $array[1];
+        $obj->name = $array[2];
+        $obj->password = $array[3];
+        $obj->email = $array[4];
+        $obj->avatar = $array[5];
+        $obj->sign_up = $array[6];
+
+        return $obj;
+
     } catch (\PDOException $e) {
         print $e->getMessage();
         return NULL;
@@ -50,15 +55,21 @@ function get($id) {
 function create($username, $name, $password, $email, $avatar_path) {
     try {
         $db = \Db::dbc();
+        
         /* Hashage du mot de passe */
         $hash_pass = hash_password($password);
+        
+        // Ajout de l'utilisateur
         $sql = "INSERT INTO `UTILISATEUR` (`ID_USER`, `USERNAME`, `NAME`, `PASSWORD`, `EMAIL`, `AVATAR`, `SIGN_UP`) VALUES (NULL, '$username', '$name', '$hash_pass', '$email', '$avatar_path', NOW())";
         $db->query($sql);
-        $sql = "SELECT `ID_USER` FROM `UTILISATEUR` WHERE `USERNAME` = :username";
-        $sth = $db->prepare($sql);
-        $sth->execute(array(':username' => $username));
+
+        // Récupération du dernier id créé
+        $sql = "SELECT `ID_USER` FROM `UTILISATEUR` ORDER BY `ID_USER` DESC LIMIT 1";
+        $sth = $db->query($sql);
         $result = $sth->fetch();
+
         return $result[0];
+
     } catch (\PDOException $e) {
         print $e->getMessage();
         return NULL;
@@ -76,10 +87,22 @@ function create($username, $name, $password, $email, $avatar_path) {
 function modify($uid, $username, $name, $email) {
     try {
         $db = \Db::dbc();
+
+        $sql = "SELECT `ID_USER` FROM `UTILISATEUR` WHERE `ID_USER` = :uid";
+        $sth = $db->prepare($sql);
+        $sth->execute(array(':uid' => $uid));
+        
+        // Retourne NULL si aucun utilisateur n'est trouvé
+        if($sth->rowCount() < 1)
+            return false;
+
+        // Mise à jour des données de l'utilisateur
         $sql = "UPDATE `UTILISATEUR` SET `USERNAME` = '$username', `NAME` = '$name', `EMAIL` = '$email' WHERE `ID_USER` = :uid";
         $sth = $db->prepare($sql);
         $sth->execute(array(':uid' => $uid));
+        
         return true;
+    
     } catch (\PDOException $e) {
         print $e->getMessage();
         return false;
@@ -95,12 +118,17 @@ function modify($uid, $username, $name, $email) {
 function change_password($uid, $new_password) {
     try {
         $db = \Db::dbc();
+
         /* Hashage du mot de passe */
         $hash_pass = hash_password($new_password);
+        
+        // Mise à jour des données
         $sql = "UPDATE `UTILISATEUR` SET `PASSWORD` = '$hash_pass' WHERE `ID_USER` = :uid";
         $sth = $db->prepare($sql);
         $sth->execute(array(':uid' => $uid));
+
         return true;
+    
     } catch (\PDOException $e) {
         print $e->getMessage();
         return false;
@@ -115,10 +143,14 @@ function change_password($uid, $new_password) {
 function change_avatar($uid, $avatar_path) {
     try {
         $db = \Db::dbc();
+        
+        // Mise à jour des données
         $sql = "UPDATE `UTILISATEUR` SET `PASSWORD` = '$avatar_path' WHERE `ID_USER` = :uid";
         $sth = $db->prepare($sql);
         $sth->execute(array(':uid' => $uid));
+
         return true;
+    
     } catch (\PDOException $e) {
         print $e->getMessage();
         return false;
@@ -132,10 +164,14 @@ function change_avatar($uid, $avatar_path) {
 function destroy($id) {
     try {
         $db = \Db::dbc();
+
+        // Suppression de l'utilisateur
         $sql = "DELETE FROM `UTILISATEUR` WHERE `ID_USER` = :id";
         $sth = $db->prepare($sql);
         $sth->execute(array(':id' => $id));
+        
         return true;
+    
     } catch (\PDOException $e) {
         print $e->getMessage();
         return false;
@@ -158,9 +194,13 @@ function search($string) {
     try {
         $db = \Db::dbc();
         $i = 0;
+
+        // Recherche de la chaine dans les noms et les pseudos
         $sql = "SELECT `ID_USER` FROM `UTILISATEUR` WHERE `USERNAME` LIKE :string OR `NAME` LIKE :string";
         $sth = $db->prepare($sql);
         $sth->execute(array(':string' => $string));
+
+        // Si la chaine fournie en commentaire est présente en toute lettre
         if ($result = $sth->fetch()) {
             $arrayObj[] = (object) array();
             $arrayObj[0] = get($result[0]);
@@ -169,12 +209,17 @@ function search($string) {
                     $arrayObj[$i] = get($result[0]);
                     $i++;
             }
-        }
-        else
+        } 
+        else // Si la chaine fournie n'est pas présente en toute lettre
         {
             $sql = "SELECT `ID_USER`, INSTR( `USERNAME`, '$string' ), INSTR( `NAME`, '$string') FROM `UTILISATEUR`";
             $sth = $db->query($sql);
+
+            if($sth->rowCount() < 1)
+                return $arrayObj = [];
+
             $arrayObj[] = (object) array();
+
             while($result = $sth->fetch()) {
                 if ($result[1] !== 0 || $result[2] !== 0)
                 {
@@ -183,7 +228,9 @@ function search($string) {
                 }
             }
         }
+
         return $arrayObj;
+
     } catch (\PDOException $e) {
         print $e->getMessage();
         return NULL;
@@ -197,14 +244,22 @@ function list_all() {
     try {
         $db = \Db::dbc();
         $i = 0;
+
+        // Selectionne tout les utilisateurs de la table
         $sql = "SELECT * FROM `UTILISATEUR`";
         $sth = $db->query($sql);
+
+        if($sth->rowCount() < 1)
+            return $arrayObj = [];
+
         $arrayObj[] = (object) array();
         while($result = $sth->fetch()) {
             $arrayObj[$i] = get($result[0]);
             $i++;
         }
+
         return $arrayObj;
+
     } catch (\PDOException $e) {
         print $e->getMessage();
         return NULL;
@@ -218,6 +273,8 @@ function list_all() {
 function get_by_username($username) {
     try {
         $db = \Db::dbc();
+
+        // Recherche 
         $sql = "SELECT `ID_USER`  FROM `UTILISATEUR` WHERE `USERNAME` = :username";
         $sth = $db->prepare($sql);
         $sth->execute(array(':username' => $username));
@@ -295,12 +352,12 @@ function get_stats($uid) {
         $sth = $db->prepare("SELECT COUNT(*) FROM `SUIVRE` WHERE `ID_USER` = :uid");
         $sth->execute(array(':uid' => $uid));
         $response = $sth->fetch();
-        $nb_followers = $response[0];
+        $nb_following = $response[0];
 
         $sth = $db->prepare("SELECT COUNT(*) FROM `SUIVRE` WHERE `ID_USER_1` = :uid");
         $sth->execute(array(':uid' => $uid));
         $response = $sth->fetch();
-        $nb_following = $response[0];
+        $nb_followers = $response[0];
 
         $obj = (object) array();
         $obj->nb_posts = $nb_posts;

@@ -283,10 +283,11 @@ function search($string) {
         {
             $sql = "SELECT `ID_TWEET`, INSTR( `CONTENT`, '$string' ) FROM `TWEET`";
             $sth = $db->query($sql);
-            $arrayObj[] = (object) array();
 
             if($sth->rowCount() < 1)
                 return $arrayObj = [];
+
+            $arrayObj[] = (object) array();
 
             while($result = $sth->fetch()) {
                 if ($result[1] != 0)
