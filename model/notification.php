@@ -190,7 +190,6 @@ function get_followed_notifications($uid) {
 
           $i++;
       }
-      var_dump($arrayObj);
 
       return $arrayObj;
 

@@ -145,9 +145,9 @@ function change_avatar($uid, $avatar_path) {
         $db = \Db::dbc();
         
         // Mise à jour des données
-        $sql = "UPDATE `UTILISATEUR` SET `PASSWORD` = '$avatar_path' WHERE `ID_USER` = :uid";
+        $sql = "UPDATE `UTILISATEUR` SET `AVATAR` = :avatar WHERE `ID_USER` = :uid";
         $sth = $db->prepare($sql);
-        $sth->execute(array(':uid' => $uid));
+        $sth->execute(array(':uid' => $uid, ':avatar' => $avatar_path));
 
         return true;
     
