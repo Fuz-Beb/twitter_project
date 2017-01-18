@@ -117,7 +117,7 @@ function get_mentioned_notifications($uid) {
 
           $i++;
       }
-
+      
       return $arrayObj;
 
   } catch (\PDOException $e) {
@@ -183,7 +183,7 @@ function get_followed_notifications($uid) {
           $arrayObj[$i]->date = new \DateTime($array[1]);
 
           // PERMET DE METTRE A NULL SI PAS D'ARGUMENT SINON METTRE VALEUR
-          if($array[2] == NULL)
+          if(empty($array[2]))
               $arrayObj[$i]->reading_date = NULL;
           else
               $arrayObj[$i]->reading_date = new \DateTime($array[2]);
