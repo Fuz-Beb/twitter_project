@@ -266,7 +266,7 @@ function search($string) {
     try {
         $db = \Db::dbc();
         $i = 0;
-        $sql = "SELECT `ID_TWEET` FROM `dbproject_app`.`TWEET` WHERE (CONVERT(`CONTENT` USING utf8) LIKE '%$string%')";
+        $sql = "SELECT `ID_TWEET` FROM `TWEET` WHERE (CONVERT(`CONTENT` USING utf8) LIKE '%$string%')";
         $sth = $db->query($sql);
 
         // Si l'argument est vide alors ne rien faire

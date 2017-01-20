@@ -28,10 +28,8 @@ function get_liked_notifications($uid) {
       if($sth->rowCount() < 1)
           return $arrayObj = [];
 
-      $arrayObj[] = (object) array();
-
       while($array = $sth->fetch()) {
-
+          $arrayObj[$i] = (object) array();
           $arrayObj[$i]->type = "liked";
           $arrayObj[$i]->post = \Model\Post\get($array[0]);
           $arrayObj[$i]->liked_by = \Model\Post\get_likes($array[0]);
@@ -101,9 +99,8 @@ function get_mentioned_notifications($uid) {
       if($sth->rowCount() < 1)
           return $arrayObj = [];
 
-      $arrayObj[] = (object) array();
-
       while($array = $sth->fetch()) {
+          $arrayObj[$i] = (object) array();
           $arrayObj[$i]->type = "mentioned";
           $arrayObj[$i]->post = \Model\Post\get($array[0]);
           $arrayObj[$i]->mentioned_by = \Model\User\get($array[3]);
@@ -117,7 +114,7 @@ function get_mentioned_notifications($uid) {
 
           $i++;
       }
-      
+
       return $arrayObj;
 
   } catch (\PDOException $e) {
@@ -174,10 +171,8 @@ function get_followed_notifications($uid) {
       if($sth->rowCount() < 1)
           return $arrayObj = [];
 
-      $arrayObj[] = (object) array();
-
       while($array = $sth->fetch()) {
-
+          $arrayObj[$i] = (object) array();
           $arrayObj[$i]->type = "followed";
           $arrayObj[$i]->user = \Model\User\get($array[0]);
           $arrayObj[$i]->date = new \DateTime($array[1]);

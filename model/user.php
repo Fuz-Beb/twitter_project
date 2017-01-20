@@ -200,7 +200,7 @@ function search($string) {
             return $arrayObj = [];
 
         // Recherche de la chaine dans les noms et les pseudos
-        $sql = "SELECT * FROM `dbproject_app`.`UTILISATEUR` WHERE (CONVERT(`USERNAME` USING utf8) LIKE '%$string%') OR (CONVERT(`NAME` USING utf8) LIKE '%$string%')";
+        $sql = "SELECT * FROM `UTILISATEUR` WHERE (CONVERT(`USERNAME` USING utf8) LIKE '%$string%') OR (CONVERT(`NAME` USING utf8) LIKE '%$string%')";
         $sth = $db->query($sql);
 
         if($sth->rowCount() < 1)
