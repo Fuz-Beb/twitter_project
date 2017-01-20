@@ -285,25 +285,7 @@ function search($string) {
                     $i++;
             }
         }
-        /*else
-        {
-            $sql = "SELECT `ID_TWEET` FROM `dbproject_app`.`TWEET` WHERE (CONVERT(`CONTENT` USING utf8) LIKE '%:string%')";
-            $sth = $db->prepare($sql);
-            $sth->execute(array(':string' => $string));
 
-            if($sth->rowCount() < 1)
-                return $arrayObj = [];
-
-            $arrayObj[] = (object) array();
-
-            while($result = $sth->fetch()) {
-                if ($result[1] != 0)
-                {
-                    $arrayObj[$i] = get($result[0]);
-                    $i++;
-                }
-            }
-        }*/
         return $arrayObj;
 
     } catch (\PDOException $e) {
