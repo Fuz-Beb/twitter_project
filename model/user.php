@@ -195,10 +195,16 @@ function search($string) {
         $db = \Db::dbc();
         $i = 0;
 
+        // Si l'argument est vide alors ne rien faire
+        if($string == '')
+            return $arrayObj = [];
+
         // Recherche de la chaine dans les noms et les pseudos
-        $sql = "SELECT `ID_USER` FROM `UTILISATEUR` WHERE `USERNAME` LIKE :string OR `NAME` LIKE :string";
-        $sth = $db->prepare($sql);
-        $sth->execute(array(':string' => $string));  
+        $sql = "SELECT * FROM `dbproject_app`.`UTILISATEUR` WHERE (CONVERT(`USERNAME` USING utf8) LIKE '%$string%') OR (CONVERT(`NAME` USING utf8) LIKE '%$string%')";
+        $sth = $db->query($sql);
+
+        if($sth->rowCount() < 1)
+            return $arrayObj = [];
 
         // Si la chaine fournie en commentaire est présente en toute lettre
         if ($result = $sth->fetch()) {
@@ -208,24 +214,6 @@ function search($string) {
             while($result = $sth->fetch()) {
                     $arrayObj[$i] = get($result[0]);
                     $i++;
-            }
-        }
-        else // Si la chaine fournie n'est pas présente en toute lettre
-        {
-            $sql = "SELECT `ID_USER`, INSTR( `USERNAME`, '$string' ), INSTR( `NAME`, '$string') FROM `UTILISATEUR`";
-            $sth = $db->query($sql);
-
-            if($sth->rowCount() < 1)
-                return $arrayObj = [];
-
-            $arrayObj[] = (object) array();
-
-            while($result = $sth->fetch()) {
-                if ($result[1] !== 0 || $result[2] !== 0)
-                {
-                    $arrayObj[$i] = get($result[0]);
-                    $i++;
-                }
             }
         }
 

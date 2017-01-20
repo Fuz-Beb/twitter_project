@@ -266,12 +266,15 @@ function search($string) {
     try {
         $db = \Db::dbc();
         $i = 0;
-        $sql = "SELECT `ID_TWEET` FROM `TWEET` WHERE `CONTENT` LIKE :string";
-        $sth = $db->prepare($sql);
-        $sth->execute(array(':string' => $string));
+        $sql = "SELECT `ID_TWEET` FROM `dbproject_app`.`TWEET` WHERE (CONVERT(`CONTENT` USING utf8) LIKE '%$string%')";
+        $sth = $db->query($sql);
+
+        // Si l'argument est vide alors ne rien faire
+        if($string == '')
+            return $arrayObj = [];
 
         if($sth->rowCount() < 1)
-            return $arrayObj = [];        
+            return NULL;
 
         if ($result = $sth->fetch()) {
             $arrayObj[] = (object) array();
@@ -282,10 +285,11 @@ function search($string) {
                     $i++;
             }
         }
-        else
+        /*else
         {
-            $sql = "SELECT `ID_TWEET`, INSTR( `CONTENT`, '$string' ) FROM `TWEET`";
-            $sth = $db->query($sql);
+            $sql = "SELECT `ID_TWEET` FROM `dbproject_app`.`TWEET` WHERE (CONVERT(`CONTENT` USING utf8) LIKE '%:string%')";
+            $sth = $db->prepare($sql);
+            $sth->execute(array(':string' => $string));
 
             if($sth->rowCount() < 1)
                 return $arrayObj = [];
@@ -299,7 +303,7 @@ function search($string) {
                     $i++;
                 }
             }
-        }
+        }*/
         return $arrayObj;
 
     } catch (\PDOException $e) {
