@@ -18,13 +18,13 @@ function get($id) {
         $sql = "SELECT `ID_USER`, `USERNAME`, `NAME`, `PASSWORD`, `EMAIL`, `AVATAR`, `SIGN_UP` FROM `UTILISATEUR` WHERE `ID_USER` = :id";
         $sth = $db->prepare($sql);
         $sth->execute(array(':id' => $id));
-        
+
         // Retourne NULL si aucun utilisateur n'est trouvé
         if($sth->rowCount() < 1)
             return NULL;
 
         $array = $sth->fetch();
-        
+
         $obj = (object) array();
         $obj->id = $array[0];
         $obj->username = $array[1];
@@ -55,10 +55,10 @@ function get($id) {
 function create($username, $name, $password, $email, $avatar_path) {
     try {
         $db = \Db::dbc();
-        
+
         /* Hashage du mot de passe */
         $hash_pass = hash_password($password);
-        
+
         // Ajout de l'utilisateur
         $sql = "INSERT INTO `UTILISATEUR` (`ID_USER`, `USERNAME`, `NAME`, `PASSWORD`, `EMAIL`, `AVATAR`, `SIGN_UP`) VALUES (NULL, '$username', '$name', '$hash_pass', '$email', '$avatar_path', NOW())";
         $db->query($sql);
@@ -91,7 +91,7 @@ function modify($uid, $username, $name, $email) {
         $sql = "SELECT `ID_USER` FROM `UTILISATEUR` WHERE `ID_USER` = :uid";
         $sth = $db->prepare($sql);
         $sth->execute(array(':uid' => $uid));
-        
+
         // Retourne NULL si aucun utilisateur n'est trouvé
         if($sth->rowCount() < 1)
             return false;
@@ -100,9 +100,9 @@ function modify($uid, $username, $name, $email) {
         $sql = "UPDATE `UTILISATEUR` SET `USERNAME` = '$username', `NAME` = '$name', `EMAIL` = '$email' WHERE `ID_USER` = :uid";
         $sth = $db->prepare($sql);
         $sth->execute(array(':uid' => $uid));
-        
+
         return true;
-    
+
     } catch (\PDOException $e) {
         print $e->getMessage();
         return false;
@@ -121,14 +121,14 @@ function change_password($uid, $new_password) {
 
         /* Hashage du mot de passe */
         $hash_pass = hash_password($new_password);
-        
+
         // Mise à jour des données
         $sql = "UPDATE `UTILISATEUR` SET `PASSWORD` = '$hash_pass' WHERE `ID_USER` = :uid";
         $sth = $db->prepare($sql);
         $sth->execute(array(':uid' => $uid));
 
         return true;
-    
+
     } catch (\PDOException $e) {
         print $e->getMessage();
         return false;
@@ -143,14 +143,14 @@ function change_password($uid, $new_password) {
 function change_avatar($uid, $avatar_path) {
     try {
         $db = \Db::dbc();
-        
+
         // Mise à jour des données
         $sql = "UPDATE `UTILISATEUR` SET `AVATAR` = :avatar WHERE `ID_USER` = :uid";
         $sth = $db->prepare($sql);
         $sth->execute(array(':uid' => $uid, ':avatar' => $avatar_path));
 
         return true;
-    
+
     } catch (\PDOException $e) {
         print $e->getMessage();
         return false;
@@ -169,9 +169,9 @@ function destroy($id) {
         $sql = "DELETE FROM `UTILISATEUR` WHERE `ID_USER` = :id";
         $sth = $db->prepare($sql);
         $sth->execute(array(':id' => $id));
-        
+
         return true;
-    
+
     } catch (\PDOException $e) {
         print $e->getMessage();
         return false;
@@ -198,7 +198,7 @@ function search($string) {
         // Recherche de la chaine dans les noms et les pseudos
         $sql = "SELECT `ID_USER` FROM `UTILISATEUR` WHERE `USERNAME` LIKE :string OR `NAME` LIKE :string";
         $sth = $db->prepare($sql);
-        $sth->execute(array(':string' => $string));
+        $sth->execute(array(':string' => $string));  
 
         // Si la chaine fournie en commentaire est présente en toute lettre
         if ($result = $sth->fetch()) {
@@ -209,7 +209,7 @@ function search($string) {
                     $arrayObj[$i] = get($result[0]);
                     $i++;
             }
-        } 
+        }
         else // Si la chaine fournie n'est pas présente en toute lettre
         {
             $sql = "SELECT `ID_USER`, INSTR( `USERNAME`, '$string' ), INSTR( `NAME`, '$string') FROM `UTILISATEUR`";
@@ -274,7 +274,7 @@ function get_by_username($username) {
     try {
         $db = \Db::dbc();
 
-        // Recherche 
+        // Recherche
         $sql = "SELECT `ID_USER`  FROM `UTILISATEUR` WHERE `USERNAME` = :username";
         $sth = $db->prepare($sql);
         $sth->execute(array(':username' => $username));

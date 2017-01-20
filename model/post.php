@@ -270,6 +270,9 @@ function search($string) {
         $sth = $db->prepare($sql);
         $sth->execute(array(':string' => $string));
 
+        if($sth->rowCount() < 1)
+            return $arrayObj = [];        
+
         if ($result = $sth->fetch()) {
             $arrayObj[] = (object) array();
             $arrayObj[0] = get($result[0]);
