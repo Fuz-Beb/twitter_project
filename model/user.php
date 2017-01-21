@@ -191,33 +191,30 @@ function hash_password($password) {
  * @return an array of find objects
  */
 function search($string) {
-    try {
-        $db = \Db::dbc();
-        $i = 0;
 
-        // Si l'argument est vide alors ne rien faire
-        if($string == '')
-            return $arrayObj = [];
+  try {
+      $db = \Db::dbc();
+      $i = 0;
+      $sql = "SELECT * FROM `UTILISATEUR` WHERE ( CONVERT(`USERNAME` USING utf8) LIKE '%$string%' OR CONVERT(`NAME` USING utf8) LIKE '%$string%')";
+      $sth = $db->query($sql);
 
-        // Recherche de la chaine dans les noms et les pseudos
-        $sql = "SELECT * FROM `UTILISATEUR` WHERE (CONVERT(`USERNAME` USING utf8) LIKE '%$string%') OR (CONVERT(`NAME` USING utf8) LIKE '%$string%')";
-        $sth = $db->query($sql);
+      // Si l'argument est vide alors ne rien faire
+      if($string == '')
+          return $arrayObj = [];
 
-        if($sth->rowCount() < 1)
-            return $arrayObj = [];
+      if($sth->rowCount() < 1)
+          return NULL;
 
-        // Si la chaine fournie en commentaire est présente en toute lettre
-        if ($result = $sth->fetch()) {
-            $arrayObj[] = (object) array();
-            $arrayObj[0] = get($result[0]);
-            $i++;
-            while($result = $sth->fetch()) {
-                    $arrayObj[$i] = get($result[0]);
-                    $i++;
-            }
-        }
+      if ($result = $sth->fetch()) {
+          $arrayObj[0] = get($result[0]);
+          $i++;
+          while($result = $sth->fetch()) {
+                  $arrayObj[$i] = get($result[0]);
+                  $i++;
+          }
+      }
 
-        return $arrayObj;
+      return $arrayObj;
 
     } catch (\PDOException $e) {
         print $e->getMessage();
@@ -241,6 +238,7 @@ function list_all() {
             return $arrayObj = [];
 
         $arrayObj[] = (object) array();
+
         while($result = $sth->fetch()) {
             $arrayObj[$i] = get($result[0]);
             $i++;
@@ -267,10 +265,13 @@ function get_by_username($username) {
         $sth = $db->prepare($sql);
         $sth->execute(array(':username' => $username));
         $result = $sth->fetch();
+
         if ($result == NULL)
             return NULL;
+
         else
             return get($result[0]);
+
     } catch (\PDOException $e) {
         print $e->getMessage();
         return NULL;
@@ -288,13 +289,17 @@ function get_followers($uid) {
         $sql = "SELECT `ID_USER`  FROM `SUIVRE` WHERE `ID_USER_1` = :uid";
         $sth = $db->prepare($sql);
         $sth->execute(array(':uid' => $uid));
+
         $oneObject[] = (object) array();
         $oneObject = [];
+
         while($result = $sth->fetch()) {
             $oneObject[$i] = get($result[0]);
             $i++;
         }
+
         return $oneObject;
+
     } catch (\PDOException $e) {
         print $e->getMessage();
     }
@@ -311,13 +316,17 @@ function get_followings($uid) {
         $sql = "SELECT `ID_USER_1`  FROM `SUIVRE` WHERE `ID_USER` = :uid";
         $sth = $db->prepare($sql);
         $sth->execute(array(':uid' => $uid));
+
         $oneObject[] = (object) array();
         $oneObject = [];
+
         while($result = $sth->fetch()) {
             $oneObject[$i] = get($result[0]);
             $i++;
         }
+
         return $oneObject;
+
     } catch (\PDOException $e) {
         print $e->getMessage();
     }
@@ -373,11 +382,14 @@ function check_auth($username, $password) {
         $sth = $db->prepare($sql);
         $sth->execute(array(':username' => $username));
         $result = $sth->fetch();
+
         /* Vérification du password */
         if(md5($password, $result[1]))
             return get($result[0]);
+
         else
             return NULL;
+
     } catch (\PDOException $e) {
         print $e->getMessage();
         return null;
@@ -396,11 +408,14 @@ function check_auth_id($id, $password) {
         $sth = $db->prepare($sql);
         $sth->execute(array(':id' => $id));
         $result = $sth->fetch();
+
         /* Vérification du password */
         if($password == $result[0])
             return get($id);
+
         else
             return NULL;
+
     } catch (\PDOException $e) {
         print $e->getMessage();
         return NULL;
@@ -417,7 +432,9 @@ function follow($id, $id_to_follow) {
         $db = \Db::dbc();
         $sql = "INSERT INTO `SUIVRE` (`ID_USER`, `ID_USER_1`, `NOTIF`) VALUES ('$id', '$id_to_follow', '1')";
         $db->query($sql);
+
         return true;
+
     } catch (\PDOException $e) {
         print $e->getMessage();
         return false;
@@ -435,7 +452,9 @@ function unfollow($id, $id_to_unfollow) {
         $sql = "DELETE FROM `SUIVRE` WHERE `ID_USER` = :id AND `ID_USER_1` = :id_to_unfollow";
         $sth = $db->prepare($sql);
         $sth->execute(array(':id' => $id, ':id_to_unfollow' => $id_to_unfollow));
+
         return true;
+
     } catch (\PDOException $e) {
         print $e->getMessage();
         return false;

@@ -37,11 +37,13 @@ function get_liked_notifications($uid) {
 
           if($array[2] == NULL)
               $arrayObj[$i]->reading_date = NULL;
+
           else
               $arrayObj[$i]->reading_date = new \DateTime($array[2]);
 
           $i++;
       }
+
       return $arrayObj;
 
   } catch (\PDOException $e) {
@@ -67,7 +69,6 @@ function liked_notification_seen($pid, $uid) {
 
       if($respond = 1)
       {
-          $db = \Db::dbc();
           $sth = $db->prepare("UPDATE `AIMER` SET `NOTIF` = '0', `DATE_READ` = CURRENT_TIME() WHERE `AIMER`.`ID_TWEET` = :pid AND `AIMER`.`ID_USER` = :uid;");
           $sth->execute(array(':uid' => $uid, ':pid' => $pid));
       }
@@ -140,7 +141,6 @@ function mentioned_notification_seen($uid, $pid) {
 
       if($respond = 1)
       {
-          $db = \Db::dbc();
           $sth = $db->prepare("UPDATE `MENTIONNER` SET `NOTIF` = '0', `DATE_READ` = CURRENT_TIME() WHERE `MENTIONNER`.`ID_TWEET` = :pid AND `MENTIONNER`.`ID_USER` = :uid;");
           $sth->execute(array(':uid' => $uid, ':pid' => $pid));
       }
@@ -180,6 +180,7 @@ function get_followed_notifications($uid) {
           // PERMET DE METTRE A NULL SI PAS D'ARGUMENT SINON METTRE VALEUR
           if(empty($array[2]))
               $arrayObj[$i]->reading_date = NULL;
+
           else
               $arrayObj[$i]->reading_date = new \DateTime($array[2]);
 
@@ -211,7 +212,6 @@ function followed_notification_seen($followed_id, $follower_id) {
 
       if($respond = 1)
       {
-          $db = \Db::dbc();
           $sth = $db->prepare("UPDATE `SUIVRE` SET `NOTIF` = '0', `DATE_READ` = CURRENT_TIME() WHERE `SUIVRE`.`ID_USER` = :follower_id AND `SUIVRE`.`ID_USER_1` = :followed_id;");
           $sth->execute(array(':followed_id' => $followed_id, ':follower_id' => $follower_id));
       }

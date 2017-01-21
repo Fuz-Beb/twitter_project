@@ -29,6 +29,7 @@ function get($id) {
             $obj->text = $array[1];
             $obj->date = new \DateTime($array[2]);
             $obj->author = \Model\User\get($array[0]);
+
             return $obj;
         }
         else
@@ -78,6 +79,7 @@ function get_with_joins($id) {
             $likes[$i] = \Model\User\get($result[0]);
             $i++;
         }
+
         $obj->likes = $likes;
         $obj->hashtags = extract_hashtags($obj->text);
 
@@ -90,6 +92,7 @@ function get_with_joins($id) {
             $obj->responds_to = NULL;
         else
             $obj->responds_to = get($respond[0]);
+
         return $obj;
 
     } catch (\PDOException $e) {
@@ -121,6 +124,7 @@ function create($author_id, $text, $response_to=null) {
             $sql = "INSERT INTO `TWEET` (`ID_TWEET`, `ID_USER`, `ID_TWEET_REPONSE`, `CONTENT`, `DATE_PUBLI`) VALUES (NULL, '$author_id', NULL, '$text', '$newDate')";
         else
             $sql = "INSERT INTO `TWEET` (`ID_TWEET`, `ID_USER`, `ID_TWEET_REPONSE`, `CONTENT`, `DATE_PUBLI`) VALUES (NULL, '$author_id', '$response_to', '$text', '$newDate')";
+
         $db->query($sql);
 
         // Récupération de l'id du dernier tweet créé
@@ -141,9 +145,8 @@ function create($author_id, $text, $response_to=null) {
         // Recherche des hashtags dans un texte
         $arrayHashtags = extract_hashtags($text);
 
-        foreach($arrayHashtags as $value2) {
+        foreach($arrayHashtags as $value2)
             \Model\Hashtag\attach($result[0], $value2);
-        }
 
         return $result[0];
 
@@ -219,9 +222,8 @@ function get_mentioned($pid) {
         if($sth->rowCount() < 1)
             return $arrayObj = [];
 
-        $arrayObj[] = (object) array();
-
         while($result = $sth->fetch()) {
+            $arrayObj[$i] = (object) array();
             $arrayObj[$i] = \Model\User\get($result[0]);
             $i++;
         }
@@ -277,7 +279,6 @@ function search($string) {
             return NULL;
 
         if ($result = $sth->fetch()) {
-            $arrayObj[] = (object) array();
             $arrayObj[0] = get($result[0]);
             $i++;
             while($result = $sth->fetch()) {
@@ -317,7 +318,6 @@ function list_all($date_sorted=false) {
         if($sth->rowCount() < 1)
             return $arrayObj = [];
 
-        $arrayObj[] = (object) array();
         while($result = $sth->fetch()) {
             $arrayObj[$i] = get($result[0]);
             $i++;
@@ -354,11 +354,11 @@ function list_user_posts($id, $date_sorted="DESC") {
         if($sth->rowCount() < 1)
             return $arrayObj = [];
 
-        $arrayObj[] = (object) array();
         while($result = $sth->fetch()) {
             $arrayObj[$i] = get($result[0]);
             $i++;
         }
+
         return $arrayObj;
 
     } catch (\PDOException $e) {
@@ -382,11 +382,11 @@ function get_likes($pid) {
         if($sth->rowCount() < 1)
             return $arrayObj = [];
 
-        $arrayObj = (object) array();
         while($result = $sth->fetch()) {
             $arrayObj = \Model\User\get($result[0]);
             $i++;
         }
+
         return $arrayObj;
 
     } catch (\PDOException $e) {
@@ -411,11 +411,12 @@ try {
     if($sth->rowCount() < 1)
         return $arrayObj = [];
 
-    $arrayObj[] = (object) array();
-        while($result = $sth->fetch()) {
-            $arrayObj[$i] = get($result[0]);
-            $i++;
-        }
+    while($result = $sth->fetch()) {
+        $arrayObj[$i] = (object) array();
+        $arrayObj[$i] = get($result[0]);
+        $i++;
+    }
+
     return $arrayObj;
 
     } catch (\PDOException $e) {
@@ -466,9 +467,8 @@ function like($uid, $pid) {
     $sth->execute(array(':pid' => $pid, ':uid' => $uid));
 
     if($sth->rowCount() > 0)
-    {
         return true;
-    }
+
     $sql = "INSERT INTO `AIMER` (`ID_TWEET`, `ID_USER`, `NOTIF`) VALUES (:pid, :uid, '1');";
     $sth = $db->prepare($sql);
     $sth->execute(array(':pid' => $pid, ':uid' => $uid));
@@ -494,9 +494,7 @@ function unlike($uid, $pid) {
         $sth->execute(array(':pid' => $pid, ':uid' => $uid));
 
         if($sth->rowCount() == 0)
-        {
             return true;
-        }
 
         $sql = "DELETE FROM `AIMER` WHERE `ID_TWEET` = :pid AND `ID_USER` = :uid";
         $sth = $db->prepare($sql);
