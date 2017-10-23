@@ -6,4 +6,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 else {
     \Controller\User\login_page();
 }
-require '../lib/closure.php';
+require dirname(__DIR__).'/lib/closure.php';
